@@ -1,5 +1,10 @@
 plugins {
     id("java")
+    application
+}
+
+application {
+    mainClass = "uz.pdp.hotelbooking.Main"
 }
 
 group = "uz.pdp"
