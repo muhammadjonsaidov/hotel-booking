@@ -1,3 +1,3 @@
-package uz.pdp.hotelbooking;
+package hotelbooking;
 
 public enum ReservationStatus { Confirmed, Cancelled }

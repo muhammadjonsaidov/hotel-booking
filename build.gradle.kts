@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-    mainClass = "uz.pdp.hotelbooking.Main"
+    mainClass = "hotelbooking.Main"
 }
 
 group = "uz.pdp"

@@ -1,4 +1,4 @@
-package uz.pdp.hotelbooking;
+package hotelbooking;
 
 public record BookingResult(String outcome, String reservationId) {
     public BookingResult(String outcome) {

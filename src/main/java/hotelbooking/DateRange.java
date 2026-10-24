@@ -1,4 +1,4 @@
-package uz.pdp.hotelbooking;
+package hotelbooking;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,4 @@
-package uz.pdp.hotelbooking;
+package hotelbooking;
 
 public class Reservation {
     final String id;
