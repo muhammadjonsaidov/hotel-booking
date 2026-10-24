@@ -5,8 +5,12 @@ build/
 !**/src/test/**/build/
 .kotlin
 .env
+.codex
+.claude
+./docs/activitysheets
 
 ### IntelliJ IDEA ###
+.idea
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
