@@ -1,11 +1,11 @@
 package hotelbooking;
 
 public class Reservation {
-    final String id;
-    final Guest guest;
-    final Room room;
-    final DateRange stay;
-    private ReservationStatus status = ReservationStatus.Confirmed;
+    private final String id;
+    private final Guest guest;
+    private final Room room;
+    private final DateRange stay;
+    private ReservationStatus status = ReservationStatus.CONFIRMED;
 
     public Reservation(String id, Guest guest, Room room, DateRange stay) {
         this.id = id;
@@ -14,18 +14,22 @@ public class Reservation {
         this.stay = stay;
     }
 
+    public String id() {
+        return id;
+    }
+
     public ReservationStatus status() {
         return status;
     }
 
     // A reservation blocks a request when it is still Confirmed for the same room and shares a night.
     public boolean blocks(Room room, DateRange stay) {
-        return status == ReservationStatus.Confirmed && this.room.equals(room) && this.stay.overlaps(stay);
+        return status == ReservationStatus.CONFIRMED && this.room.equals(room) && this.stay.overlaps(stay);
     }
 
     public boolean cancel() {
-        if (status == ReservationStatus.Cancelled) return false;
-        status = ReservationStatus.Cancelled;
+        if (status == ReservationStatus.CANCELLED) return false;
+        status = ReservationStatus.CANCELLED;
         return true;
     }
 }

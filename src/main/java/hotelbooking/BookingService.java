@@ -27,21 +27,24 @@ public class BookingService {
         if (!stay.isValid()) return new BookingResult("InvalidDates");
         if (store.hasOverlap(room, stay)) return new BookingResult("Unavailable");
 
-        try {
-            Thread.sleep(slowStepMs); // 0 normally; the race demo makes this step slow
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException("Booking interrupted", e);
-        }
+        pause(); // does nothing normally; the race demo makes this step slow
 
-        var reservation = new Reservation("R" + (101 + store.count()), guest, room, stay);
+        Reservation reservation = new Reservation("R" + (101 + store.count()), guest, room, stay);
         store.save(reservation);
         email.sendConfirmation(reservation);
-        return new BookingResult("Accepted", reservation.id);
+        return new BookingResult("Accepted", reservation.id());
     }
 
     public boolean cancel(String reservationId) {
-        var reservation = store.find(reservationId);
+        Reservation reservation = store.find(reservationId);
         return reservation != null && reservation.cancel();
+    }
+
+    private void pause() {
+        try {
+            Thread.sleep(slowStepMs);
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

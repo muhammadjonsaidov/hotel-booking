@@ -19,8 +19,9 @@ public class ReservationStore {
         rows.add(reservation);
     }
 
+    // Returns null when no reservation has that id.
     public Reservation find(String id) {
-        return rows.stream().filter(row -> row.id.equals(id)).findFirst().orElse(null);
+        return rows.stream().filter(row -> row.id().equals(id)).findFirst().orElse(null);
     }
 
     public int countConfirmed(Room room, DateRange stay) {

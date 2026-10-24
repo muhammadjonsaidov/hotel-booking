@@ -1,3 +1,3 @@
 package hotelbooking;
 
-public enum ReservationStatus { Confirmed, Cancelled }
+public enum ReservationStatus { CONFIRMED, CANCELLED }
