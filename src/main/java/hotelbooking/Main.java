@@ -18,8 +18,8 @@ public class Main {
     }
 
     private static void runDemo() {
-        ReservationStore store = new ReservationStore();
-        EmailSender email = new EmailSender();
+        InMemoryReservationStore store = new InMemoryReservationStore();
+        EmailNotificationSender email = new EmailNotificationSender();
         BookingService service = new BookingService(List.of(R7, R8), store, email);
 
         System.out.println("Free rooms 12-14 Nov: " + names(service.findFreeRooms(nov(12, 14))));
@@ -34,9 +34,9 @@ public class Main {
     }
 
     private static void runRace() throws InterruptedException {
-        ReservationStore store = new ReservationStore();
+        InMemoryReservationStore store = new InMemoryReservationStore();
         // Each request now spends half a second between checking and saving.
-        BookingService service = new BookingService(List.of(R7, R8), store, new EmailSender(), 500);
+        BookingService service = new BookingService(List.of(R7, R8), store, new EmailNotificationSender(), 500);
         DateRange stay = nov(12, 14);
         BookingResult[] results = new BookingResult[2];
 

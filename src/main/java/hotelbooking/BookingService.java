@@ -5,17 +5,17 @@ import java.util.List;
 public class BookingService {
     private final List<Room> rooms;
     private final ReservationStore store;
-    private final EmailSender email;
+    private final NotificationSender notifications;
     private final int slowStepMs;
 
-    public BookingService(List<Room> rooms, ReservationStore store, EmailSender email) {
-        this(rooms, store, email, 0);
+    public BookingService(List<Room> rooms, ReservationStore store, NotificationSender notifications) {
+        this(rooms, store, notifications, 0);
     }
 
-    public BookingService(List<Room> rooms, ReservationStore store, EmailSender email, int slowStepMs) {
+    public BookingService(List<Room> rooms, ReservationStore store, NotificationSender notifications, int slowStepMs) {
         this.rooms = rooms;
         this.store = store;
-        this.email = email;
+        this.notifications = notifications;
         this.slowStepMs = slowStepMs;
     }
 
@@ -31,7 +31,7 @@ public class BookingService {
 
         Reservation reservation = new Reservation("R" + (101 + store.count()), guest, room, stay);
         store.save(reservation);
-        email.sendConfirmation(reservation);
+        notifications.sendConfirmation(reservation);
         return new BookingResult("Accepted", reservation.id());
     }
 

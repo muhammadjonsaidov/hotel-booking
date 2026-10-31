@@ -1,30 +1,14 @@
 package hotelbooking;
 
-import java.util.ArrayList;
-import java.util.List;
+public interface ReservationStore {
+    int count();
 
-// Keeps reservations in a list.
-public class ReservationStore {
-    private final List<Reservation> rows = new ArrayList<>();
+    boolean hasOverlap(Room room, DateRange stay);
 
-    public int count() {
-        return rows.size();
-    }
-
-    public boolean hasOverlap(Room room, DateRange stay) {
-        return rows.stream().anyMatch(row -> row.blocks(room, stay));
-    }
-
-    public void save(Reservation reservation) {
-        rows.add(reservation);
-    }
+    void save(Reservation reservation);
 
     // Returns null when no reservation has that id.
-    public Reservation find(String id) {
-        return rows.stream().filter(row -> row.id().equals(id)).findFirst().orElse(null);
-    }
+    Reservation find(String id);
 
-    public int countConfirmed(Room room, DateRange stay) {
-        return (int) rows.stream().filter(row -> row.blocks(room, stay)).count();
-    }
+    int countConfirmed(Room room, DateRange stay);
 }

@@ -19,11 +19,11 @@ class BookingServiceTests {
     }
 
     // The only place that builds the service, so construction changes stay in one place.
-    record Fixture(BookingService service, ReservationStore store, EmailSender email) {}
+    record Fixture(BookingService service, InMemoryReservationStore store, EmailNotificationSender email) {}
 
     static Fixture newService() {
-        ReservationStore store = new ReservationStore();
-        EmailSender email = new EmailSender();
+        InMemoryReservationStore store = new InMemoryReservationStore();
+        EmailNotificationSender email = new EmailNotificationSender();
         return new Fixture(new BookingService(List.of(R7, R8), store, email), store, email);
     }
 
