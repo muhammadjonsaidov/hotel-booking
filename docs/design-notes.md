@@ -44,3 +44,13 @@ Maya and Omar both received Accepted for R7 on 12–14 November, leaving two Con
 The race occurs between store.hasOverlap(room, stay) and store.save(reservation) inside reserve(): both checks see an empty store before either request saves, so both requests proceed using their earlier answers.
 
 # Refactoring design notes
+
+## Refactoring
+
+Refactoring changes how code is organised while preserving its existing behavior.
+
+Must stay the same:
+
+- All six characterization tests must pass after every refactoring move once they are written.
+- The demo must print the same nine lines.
+- The race demo must still show double booking.
