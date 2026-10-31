@@ -68,3 +68,13 @@ Job: tells guests what happened, by email or SMS.
 | Confirmation message | An email or SMS telling a guest that their reservation is confirmed. |
 | Sent | The confirmation message was sent successfully; this is a message status. |
 | Failed | The confirmation message could not be sent; this is a message status that never changes the reservation. |
+
+## Same word, different meaning
+
+| Word | Rooms | Reservations | Payments | Notifications |
+| --- | --- | --- | --- | --- |
+| Status | In service / out of service | Confirmed / Cancelled | Paid / Declined | Sent / Failed |
+| Room | A room such as R8, with its type, nightly price and service availability. | Only the room number, such as R8, on a reservation. | Not used. | Text identifying the room in a confirmation, such as “Room R8”. |
+| Cancel | Remove a room from sale. | Withdraw the guest’s reservation and free its nights. | Refund a deposit. | Not used. |
+
+If Notifications changed Maya’s reservation status from Confirmed to Failed when an SMS failed, Maya could lose R7 because the reservation would stop blocking its nights, violating R6.
