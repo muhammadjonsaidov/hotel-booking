@@ -31,7 +31,12 @@ public class BookingService {
 
         Reservation reservation = new Reservation("R" + (101 + store.count()), guest, room, stay);
         store.save(reservation);
-        notifications.sendConfirmation(reservation);
+        try {
+            notifications.sendConfirmation(reservation);
+        } catch (RuntimeException failure) {
+            // The booking is already saved; report the notification failure without losing it.
+            return new BookingResult("Accepted", reservation.id(), true);
+        }
         return new BookingResult("Accepted", reservation.id());
     }
 

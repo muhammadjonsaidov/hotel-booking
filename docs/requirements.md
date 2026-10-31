@@ -34,3 +34,8 @@ Proof: Free rooms 12-14 Nov: R7, R8
 A booking can be looked up by its id.
 Check: R101 → Maya, R7, 12–14 November, Confirmed.
 Proof: Booking lookup by id, checked separately before cancellation: R101 → Maya, R7, 12–14 November, Confirmed.
+
+## R6 · Failed message
+If the confirmation cannot be sent, the booking stays saved and Accepted, and the failure is reported.
+Check: confirmation sending fails → Accepted R101, notificationFailed is true, and the store still contains one reservation.
+Proof: a_failed_confirmation_keeps_the_booking passes with a failing fake sender, Accepted R101, notificationFailed true, and a store count of 1.
