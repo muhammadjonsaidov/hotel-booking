@@ -57,11 +57,13 @@ Must stay the same:
 
 ## What our code breaks
 
+Before refactoring:
+
 - BookingService asks for the concrete ReservationStore class (D: dependency inversion). Switching from the in-memory list to a database store would require changing BookingService’s dependency even though the booking rules stay the same.
 - BookingService asks for the concrete EmailSender class (D: dependency inversion, and O: open/closed). Supporting SMS would require editing BookingService instead of supplying another implementation of a shared notification interface.
 
 ## Proof
 
-Tests: all 6 tests passed, with 0 failures, errors or skipped tests.
+Tests: the initial 6 characterization tests passed throughout refactoring; the final suite now passes all 8 tests (5 booking tests and 3 notification tests), with 0 failures, errors or skipped tests.
 Demo: the same nine output lines as before the refactoring, matched line by line.
 Race: still double-booked R7 for 12–14 November, with Maya accepted as R101 and Omar as R102; 2 Confirmed reservations, matching the previous output.
