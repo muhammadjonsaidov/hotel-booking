@@ -54,3 +54,8 @@ Must stay the same:
 - All six characterization tests must pass after every refactoring move once they are written.
 - The demo must print the same nine lines.
 - The race demo must still show double booking.
+
+## What our code breaks
+
+- BookingService asks for the concrete ReservationStore class (D: dependency inversion). Switching from the in-memory list to a database store would require changing BookingService’s dependency even though the booking rules stay the same.
+- BookingService asks for the concrete EmailSender class (D: dependency inversion, and O: open/closed). Supporting SMS would require editing BookingService instead of supplying another implementation of a shared notification interface.
