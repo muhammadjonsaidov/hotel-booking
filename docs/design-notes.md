@@ -42,3 +42,5 @@ Comparison: the output matches the prediction and the expected result of two Con
 
 Maya and Omar both received Accepted for R7 on 12–14 November, leaving two Confirmed reservations for the same nights and breaking requirement R3.
 The race occurs between store.hasOverlap(room, stay) and store.save(reservation) inside reserve(): both checks see an empty store before either request saves, so both requests proceed using their earlier answers.
+
+# Refactoring design notes

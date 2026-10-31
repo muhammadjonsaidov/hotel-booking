@@ -25,7 +25,7 @@ Your hotel-booking folder has the P03 app: it searches free rooms, books, refuse
 | Step | What you do | What you add to your project folder |
 | --- | --- | --- |
 | 1 · Refactoring | Learn what refactoring is and what must stay the same | design-notes.md: P04 section |
-| 2 · Lock the behaviour | Write 6 tests that pass on today’s code | A test project (C#) or test file (Python) |
+| 2 · Lock the behaviour | Write 6 tests that pass on today’s code | A test file your language’s test runner finds |
 | 3 · SOLID | Learn the five principles and find what our code breaks | design-notes.md: what our code breaks |
 | 4 · Target design | Draw the “after” class diagram with interfaces | draw.io page “Classes - after” |
 | 5 · Refactor | Move step by step to interfaces and separate files | Refactored code |
@@ -35,15 +35,17 @@ Your hotel-booking folder has the P03 app: it searches free rooms, books, refuse
 
 ### How you work today
 
-Work in pairs on one laptop, in the same hotel-booking folder you finished in P03. Swap who types at every new step. Keep the same language as in P03: C# (.NET 10 SDK) or Python (3.10 or newer).
+Work in pairs on one laptop, in the same hotel-booking folder you finished in P03. Swap who types at every new step. Keep the same language you used in P03: every code slide today has a tab for each of the six languages.
 
-C# tests use xUnit: the first “dotnet test” downloads its packages, so you need internet once. Python tests use the built-in unittest, so there is nothing to install.
+Each language runs the tests with its usual tool. Python (unittest), Go (go test) and JavaScript (node --test) have a test runner built in, so there is nothing to install. C# (xUnit), Java (JUnit with Maven) and Dart (package:test) download their test package the first time, so those three need internet once.
 
-If you missed P03: open the P03 lesson page, download “Runnable code · C# and Python”, and put its HotelBooking folder (C#) or hotel_booking.py (Python) into a new hotel-booking folder. The “Runnable code” link on this page has the finished P04 project if you get stuck.
+If you missed P03: open the P03 lesson page, choose your language under “Runnable code”, download that ZIP and extract it into a new hotel-booking folder. The “Runnable code” link on this page has the finished P04 project in the same six languages if you get stuck.
 
 ### Completed example: your folder at the end of P04
 
 ### hotel-booking folder
+
+#### C#
 
 ```text
 hotel-booking/
@@ -51,18 +53,124 @@ hotel-booking/
 │   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
 │   ├── design-notes.md       P03 answers, plus today's P04 sections
 │   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
-├── HotelBooking/             C#: one file per class; Program.cs wires them together
-├── HotelBooking.Tests/       C#: BookingServiceTests.cs with 8 tests
-├── hotel_booking/            Python: domain.py, stores.py, notifications.py, booking.py
-├── main.py                   Python: wires everything together and runs the demo
-└── test_booking_service.py   Python: 8 tests
+├── HotelBooking.Tests/BookingServiceTests.cs   8 tests
+├── HotelBooking.Tests/HotelBooking.Tests.csproj
+├── HotelBooking/BookingResult.cs
+├── HotelBooking/BookingService.cs
+├── HotelBooking/DateRange.cs
+├── HotelBooking/EmailNotificationSender.cs
+├── HotelBooking/Guest.cs
+├── HotelBooking/HotelBooking.csproj
+├── HotelBooking/InMemoryReservationStore.cs
+├── HotelBooking/INotificationSender.cs
+├── HotelBooking/IReservationStore.cs
+├── HotelBooking/Program.cs
+├── HotelBooking/Reservation.cs
+├── HotelBooking/ReservationStatus.cs
+├── HotelBooking/Room.cs
+└── HotelBooking/SmsNotificationSender.cs
+```
+
+#### Python
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── hotel_booking/__init__.py
+├── hotel_booking/booking.py
+├── hotel_booking/domain.py
+├── hotel_booking/notifications.py
+├── hotel_booking/stores.py
+├── main.py
+└── test_booking_service.py   8 tests
+```
+
+#### Java
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── pom.xml
+├── src/main/java/hotelbooking/BookingResult.java
+├── src/main/java/hotelbooking/BookingService.java
+├── src/main/java/hotelbooking/DateRange.java
+├── src/main/java/hotelbooking/EmailNotificationSender.java
+├── src/main/java/hotelbooking/Guest.java
+├── src/main/java/hotelbooking/InMemoryReservationStore.java
+├── src/main/java/hotelbooking/Main.java
+├── src/main/java/hotelbooking/NotificationSender.java
+├── src/main/java/hotelbooking/Reservation.java
+├── src/main/java/hotelbooking/ReservationStatus.java
+├── src/main/java/hotelbooking/ReservationStore.java
+├── src/main/java/hotelbooking/Room.java
+├── src/main/java/hotelbooking/SmsNotificationSender.java
+└── src/test/java/hotelbooking/BookingServiceTests.java   8 tests
+```
+
+#### Go
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── booking_service_test.go   8 tests
+├── booking.go
+├── domain.go
+├── go.mod
+├── main.go
+├── notifications.go
+└── stores.go
+```
+
+#### JavaScript
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── main.js
+├── package.json
+├── src/booking.js
+├── src/domain.js
+├── src/notifications.js
+├── src/stores.js
+└── test/booking.test.js   8 tests
+```
+
+#### Dart
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── analysis_options.yaml
+├── bin/main.dart
+├── lib/booking.dart
+├── lib/domain.dart
+├── lib/hotel_booking.dart
+├── lib/notifications.dart
+├── lib/stores.dart
+├── pubspec.yaml
+└── test/booking_service_test.dart   8 tests
 ```
 
 ### Your turn · check that your P03 app still runs
 
 1. Open your hotel-booking folder in your editor.
-2. In the terminal, run the demo: dotnet run --project HotelBooking (C#) or python hotel_booking.py (Python). You should see the nine lines from P03.
-3. Run the race demo too: add -- --race (C#) or --race (Python). You should see “Double booking!”.
+2. In the terminal, run the P03 demo with the command for your language. You should see the nine lines from P03.
+3. Run the race demo too, by adding --race to that command. You should see “Double booking!”.
 4. Open docs/design-notes.md and add a new heading at the bottom: # P04 design notes
 
 **When you finish, you have:** the P03 app running in your folder, and a “P04 design notes” heading in design-notes.md.
@@ -235,9 +343,48 @@ Each test is a small method. Its name says what it checks. NewService() builds a
         self.assertEqual("Accepted R101", str(service.reserve(MAYA, R7, nov(12, 14))))
 ```
 
-### C# only: make the classes public
+#### Java
 
-The C# test project is a separate program and can only see classes marked public. Add the word public in front of every class, record and enum in Program.cs. Python needs no change.
+```java
+    @Test
+    void maya_gets_R7_when_it_is_free() {
+        Fixture fixture = newService();
+        assertEquals("Accepted R101", fixture.service().reserve(MAYA, R7, nov(12, 14)).toString());
+    }
+```
+
+#### Go
+
+```go
+func TestMayaGetsR7WhenItIsFree(t *testing.T) {
+	service, _, _ := newService()
+	if got := service.Reserve(maya, r7, nov(12, 14)).String(); got != "Accepted R101" {
+		t.Errorf("got %q, want %q", got, "Accepted R101")
+	}
+}
+```
+
+#### JavaScript
+
+```javascript
+test('Maya gets R7 when it is free', async () => {
+  const { service } = newService();
+  assert.equal(String(await service.reserve(maya, r7, nov(12, 14))), 'Accepted R101');
+});
+```
+
+#### Dart
+
+```dart
+  test('Maya gets R7 when it is free', () async {
+    final fixture = newService();
+    expect('${await fixture.service.reserve(maya, r7, nov(12, 14))}', 'Accepted R101');
+  });
+```
+
+### Make the code reachable from the tests
+
+A test file can only use what the program lets it see, and each language draws that line differently. Open your tab to see what to change: C# marks every type public, JavaScript exports them, Dart moves the file into lib/, and Python, Java and Go need no change at all.
 
 **Why C# needs “public” before the tests can run** In short: The test project is a separate program, and it can only see classes marked public. In P03 every class was written without an access word, which in C# means “only this project can use it”. Python has no such rule, so Python students skip this sub-step.
 
@@ -265,7 +412,7 @@ Python:
 from hotel_booking import BookingService, Guest
 ```
 
-### What changes in Program.cs
+### What changes before the tests compile
 
 #### C#
 
@@ -285,6 +432,38 @@ public class BookingService(...)
 
 ```python
 # nothing to change in hotel_booking.py
+```
+
+#### Java
+
+```java
+// nothing to change in HotelBooking.java: the test class sits in the same
+// package, so it can already use every type in the file
+```
+
+#### Go
+
+```go
+// nothing to change in main.go: a Go test file shares the package
+// and can already use every type in it
+```
+
+#### JavaScript
+
+```javascript
+export { BookingService, DateRange, EmailSender, Guest, Reservation, ReservationStatus, ReservationStore, Room };
+
+// Run the demo only when this file is started directly, not when a test imports it.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  if (process.argv.includes('--race')) runRace(); else runDemo();
+}
+```
+
+#### Dart
+
+```dart
+// lib/hotel_booking.dart  <- the P03 file, moved here so tests can import it
+// bin/main.dart          <- only starts runDemo or runRace
 ```
 
 ### Create the test project
@@ -307,6 +486,30 @@ dotnet add HotelBooking.Tests reference HotelBooking
 ```text
 (create test_booking_service.py in the hotel-booking folder,
  next to hotel_booking.py)
+```
+
+#### Java
+
+```text
+(create src/test/java/hotelbooking/BookingServiceTests.java)
+```
+
+#### Go
+
+```text
+(create booking_service_test.go next to main.go)
+```
+
+#### JavaScript
+
+```text
+(create test/booking.test.js in the hotel-booking folder)
+```
+
+#### Dart
+
+```text
+(create test/booking_service_test.dart in the hotel-booking folder)
 ```
 
 ### The complete test file
@@ -463,6 +666,299 @@ if __name__ == "__main__":
 
 ```
 
+#### Java
+
+```java
+// Step 2: tests that describe what the P03 app does today.
+// They must pass before the refactoring and still pass after it.
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+
+class BookingServiceTests {
+    static final Room R7 = new Room("R7", "Standard");
+    static final Room R8 = new Room("R8", "Deluxe");
+    static final Guest MAYA = new Guest("Maya", "maya@example.com");
+    static final Guest OMAR = new Guest("Omar", "omar@example.com");
+    static final Guest NORA = new Guest("Nora", "nora@example.com");
+
+    static DateRange nov(int checkIn, int checkOut) {
+        return new DateRange(LocalDate.of(2026, 11, checkIn), LocalDate.of(2026, 11, checkOut));
+    }
+
+    // The only place that builds the service: a refactoring changes this record, not every test.
+    record Fixture(BookingService service, ReservationStore store, EmailSender email) {}
+
+    static Fixture newService() {
+        ReservationStore store = new ReservationStore();
+        EmailSender email = new EmailSender();
+        return new Fixture(new BookingService(List.of(R7, R8), store, email), store, email);
+    }
+
+    @Test
+    void maya_gets_R7_when_it_is_free() {
+        Fixture fixture = newService();
+        assertEquals("Accepted R101", fixture.service().reserve(MAYA, R7, nov(12, 14)).toString());
+    }
+
+    @Test
+    void omar_is_refused_when_a_night_is_shared() {
+        Fixture fixture = newService();
+        fixture.service().reserve(MAYA, R7, nov(12, 14));
+        assertEquals("Unavailable", fixture.service().reserve(OMAR, R7, nov(13, 15)).toString());
+        assertEquals(1, fixture.store().count());
+    }
+
+    @Test
+    void nora_can_arrive_on_the_day_maya_leaves() {
+        Fixture fixture = newService();
+        fixture.service().reserve(MAYA, R7, nov(12, 14));
+        assertEquals("Accepted R102", fixture.service().reserve(NORA, R7, nov(14, 16)).toString());
+    }
+
+    @Test
+    void check_out_must_be_after_check_in() {
+        Fixture fixture = newService();
+        assertEquals("InvalidDates", fixture.service().reserve(OMAR, R8, nov(15, 15)).toString());
+        assertEquals(0, fixture.store().count());
+    }
+
+    @Test
+    void cancelling_frees_the_room_again() {
+        Fixture fixture = newService();
+        fixture.service().reserve(MAYA, R7, nov(12, 14));
+        assertTrue(fixture.service().cancel("R101"));
+        assertTrue(fixture.service().findFreeRooms(nov(12, 14)).contains(R7));
+    }
+
+    @Test
+    void one_confirmation_per_accepted_booking() {
+        Fixture fixture = newService();
+        fixture.service().reserve(MAYA, R7, nov(12, 14));
+        fixture.service().reserve(OMAR, R7, nov(13, 15));
+        fixture.service().reserve(NORA, R7, nov(14, 16));
+        assertEquals(2, fixture.email().sent());
+    }
+}
+
+```
+
+#### Go
+
+```go
+// Step 2: tests that describe what the P03 app does today.
+// They must pass before the refactoring and still pass after it.
+package main
+
+import "testing"
+
+// The only place that builds the service: a refactoring changes this function, not every test.
+func newService() (*BookingService, *ReservationStore, *EmailSender) {
+	store := &ReservationStore{}
+	email := &EmailSender{}
+	return NewBookingService([]Room{r7, r8}, store, email, 0), store, email
+}
+
+func TestMayaGetsR7WhenItIsFree(t *testing.T) {
+	service, _, _ := newService()
+	if got := service.Reserve(maya, r7, nov(12, 14)).String(); got != "Accepted R101" {
+		t.Errorf("got %q, want %q", got, "Accepted R101")
+	}
+}
+
+func TestOmarIsRefusedWhenANightIsShared(t *testing.T) {
+	service, store, _ := newService()
+	service.Reserve(maya, r7, nov(12, 14))
+	if got := service.Reserve(omar, r7, nov(13, 15)).String(); got != "Unavailable" {
+		t.Errorf("got %q, want %q", got, "Unavailable")
+	}
+	if store.Count() != 1 {
+		t.Errorf("saved %d reservations, want 1", store.Count())
+	}
+}
+
+func TestNoraCanArriveOnTheDayMayaLeaves(t *testing.T) {
+	service, _, _ := newService()
+	service.Reserve(maya, r7, nov(12, 14))
+	if got := service.Reserve(nora, r7, nov(14, 16)).String(); got != "Accepted R102" {
+		t.Errorf("got %q, want %q", got, "Accepted R102")
+	}
+}
+
+func TestCheckOutMustBeAfterCheckIn(t *testing.T) {
+	service, store, _ := newService()
+	if got := service.Reserve(omar, r8, nov(15, 15)).String(); got != "InvalidDates" {
+		t.Errorf("got %q, want %q", got, "InvalidDates")
+	}
+	if store.Count() != 0 {
+		t.Errorf("saved %d reservations, want 0", store.Count())
+	}
+}
+
+func TestCancellingFreesTheRoomAgain(t *testing.T) {
+	service, _, _ := newService()
+	service.Reserve(maya, r7, nov(12, 14))
+	if !service.Cancel("R101") {
+		t.Error("cancelling R101 should succeed")
+	}
+	if len(service.FindFreeRooms(nov(12, 14))) != 2 {
+		t.Error("R7 should be free again")
+	}
+}
+
+func TestOneConfirmationPerAcceptedBooking(t *testing.T) {
+	service, _, email := newService()
+	service.Reserve(maya, r7, nov(12, 14))
+	service.Reserve(omar, r7, nov(13, 15))
+	service.Reserve(nora, r7, nov(14, 16))
+	if email.Sent != 2 {
+		t.Errorf("sent %d confirmations, want 2", email.Sent)
+	}
+}
+
+```
+
+#### JavaScript
+
+```javascript
+// Step 2: tests that describe what the P03 app does today.
+// They must pass before the refactoring and still pass after it.
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+import { BookingService, DateRange, EmailSender, Guest, ReservationStore, Room } from './hotel-booking.js';
+
+const r7 = new Room('R7', 'Standard');
+const r8 = new Room('R8', 'Deluxe');
+const maya = new Guest('Maya', 'maya@example.com');
+const omar = new Guest('Omar', 'omar@example.com');
+const nora = new Guest('Nora', 'nora@example.com');
+
+const nov = (checkIn, checkOut) =>
+  new DateRange(new Date(Date.UTC(2026, 10, checkIn)), new Date(Date.UTC(2026, 10, checkOut)));
+
+// The only place that builds the service: a refactoring changes this function, not every test.
+function newService() {
+  const store = new ReservationStore();
+  const email = new EmailSender();
+  return { service: new BookingService([r7, r8], store, email), store, email };
+}
+
+test('Maya gets R7 when it is free', async () => {
+  const { service } = newService();
+  assert.equal(String(await service.reserve(maya, r7, nov(12, 14))), 'Accepted R101');
+});
+
+test('Omar is refused when a night is shared', async () => {
+  const { service, store } = newService();
+  await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(String(await service.reserve(omar, r7, nov(13, 15))), 'Unavailable');
+  assert.equal(store.count, 1);
+});
+
+test('Nora can arrive on the day Maya leaves', async () => {
+  const { service } = newService();
+  await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(String(await service.reserve(nora, r7, nov(14, 16))), 'Accepted R102');
+});
+
+test('check-out must be after check-in', async () => {
+  const { service, store } = newService();
+  assert.equal(String(await service.reserve(omar, r8, nov(15, 15))), 'InvalidDates');
+  assert.equal(store.count, 0);
+});
+
+test('cancelling frees the room again', async () => {
+  const { service } = newService();
+  await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(service.cancel('R101'), true);
+  assert.ok(service.findFreeRooms(nov(12, 14)).some(room => room.equals(r7)));
+});
+
+test('one confirmation per accepted booking', async () => {
+  const { service, email } = newService();
+  await service.reserve(maya, r7, nov(12, 14));
+  await service.reserve(omar, r7, nov(13, 15));
+  await service.reserve(nora, r7, nov(14, 16));
+  assert.equal(email.sent, 2);
+});
+
+```
+
+#### Dart
+
+```dart
+// Step 2: tests that describe what the P03 app does today.
+// They must pass before the refactoring and still pass after it.
+import 'package:hotel_booking/hotel_booking.dart';
+import 'package:test/test.dart';
+
+final r7 = Room('R7', 'Standard');
+final r8 = Room('R8', 'Deluxe');
+final maya = Guest('Maya', 'maya@example.com');
+final omar = Guest('Omar', 'omar@example.com');
+final nora = Guest('Nora', 'nora@example.com');
+
+DateRange nov(int checkIn, int checkOut) =>
+    DateRange(DateTime.utc(2026, 11, checkIn), DateTime.utc(2026, 11, checkOut));
+
+// The only place that builds the service: a refactoring changes this record, not every test.
+({BookingService service, ReservationStore store, EmailSender email}) newService() {
+  final store = ReservationStore();
+  final email = EmailSender();
+  return (
+    service: BookingService([r7, r8], store, email),
+    store: store,
+    email: email,
+  );
+}
+
+void main() {
+  test('Maya gets R7 when it is free', () async {
+    final fixture = newService();
+    expect('${await fixture.service.reserve(maya, r7, nov(12, 14))}', 'Accepted R101');
+  });
+
+  test('Omar is refused when a night is shared', () async {
+    final fixture = newService();
+    await fixture.service.reserve(maya, r7, nov(12, 14));
+    expect('${await fixture.service.reserve(omar, r7, nov(13, 15))}', 'Unavailable');
+    expect(fixture.store.count, 1);
+  });
+
+  test('Nora can arrive on the day Maya leaves', () async {
+    final fixture = newService();
+    await fixture.service.reserve(maya, r7, nov(12, 14));
+    expect('${await fixture.service.reserve(nora, r7, nov(14, 16))}', 'Accepted R102');
+  });
+
+  test('check-out must be after check-in', () async {
+    final fixture = newService();
+    expect('${await fixture.service.reserve(omar, r8, nov(15, 15))}', 'InvalidDates');
+    expect(fixture.store.count, 0);
+  });
+
+  test('cancelling frees the room again', () async {
+    final fixture = newService();
+    await fixture.service.reserve(maya, r7, nov(12, 14));
+    expect(fixture.service.cancel('R101'), isTrue);
+    expect(fixture.service.findFreeRooms(nov(12, 14)), contains(r7));
+  });
+
+  test('one confirmation per accepted booking', () async {
+    final fixture = newService();
+    await fixture.service.reserve(maya, r7, nov(12, 14));
+    await fixture.service.reserve(omar, r7, nov(13, 15));
+    await fixture.service.reserve(nora, r7, nov(14, 16));
+    expect(fixture.email.sent, 2);
+  });
+}
+
+```
+
 ### Run the tests
 
 ### Expected result
@@ -485,13 +981,47 @@ Ran 6 tests in 0.002s
 OK
 ```
 
+#### Java
+
+```text
+mvn -q test
+...
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+```
+
+#### Go
+
+```text
+go test -v ./...
+...
+PASS
+ok      hotelbooking
+```
+
+#### JavaScript
+
+```text
+node --test
+...
+# pass 6
+# fail 0
+```
+
+#### Dart
+
+```text
+dart test
+...
+00:00 +6: All tests passed!
+```
+
 ### Your turn · write the six tests and run them
 
-1. C#: add public in front of each class, record and enum in Program.cs, as shown above. Python: skip this step.
-2. Create the test project (C#) or the test file (Python) with the commands above.
+1. Make the change your tab shows under “Make the code reachable from the tests”. For Python, Java and Go there is nothing to do.
+2. Create the test file (and, for C# and Java, the test project) with the commands for your language above.
 3. Type the first test from the completed example, plus the start of the file (the rooms, guests, Nov() and NewService()). Run the tests: 1 should pass.
 4. Add the other five tests from “The complete test file”. Typist types, partner reads; swap after three tests.
-5. Run the tests again. You should see 6 passed (C#) or “Ran 6 tests … OK” (Python).
+5. Run the tests again. Your language’s runner should report 6 passing tests, as in “Expected result” above.
 6. If a test fails, do not change the app: compare your test with the slide. The app is correct; it is the description that must match it.
 
 **When you finish, you have:** six passing tests that describe exactly what the P03 app does.
@@ -953,7 +1483,7 @@ BookingService: rooms, store, notifications, FindFreeRooms(stay), Reserve(guest,
 | EmailSender | EmailNotificationSender, implements INotificationSender | The name says what it does; BookingService only knows the interface. |
 | ReservationStore | InMemoryReservationStore, implements IReservationStore | Says where the rows live; P07 adds a database store next to it. |
 | BookingService | Same methods; constructor takes the two interfaces | Depends on promises, not on concrete helpers (D). |
-| Guest, Room, DateRange, Reservation, ReservationStatus | Unchanged, each in its own file (C#) or in domain.py (Python) | One job per file (S). |
+| Guest, Room, DateRange, Reservation, ReservationStatus | Unchanged, moved into the domain file or files your language uses | One job per file (S). |
 | (new) SmsNotificationSender, FakeNotificationSender | Implement INotificationSender | Added in Step 7 without touching BookingService (O). |
 
 ### Your turn · draw “Classes - after” in draw.io
@@ -1044,6 +1574,98 @@ class EmailNotificationSender:
 
 ```
 
+#### Java
+
+```java
+// src/main/java/hotelbooking/NotificationSender.java
+package hotelbooking;
+
+// What BookingService needs: "tell the guest". How the message travels is not its business.
+public interface NotificationSender {
+    void sendConfirmation(Reservation reservation);
+}
+// src/main/java/hotelbooking/EmailNotificationSender.java
+package hotelbooking;
+
+// Simulated: counts the emails it would send and needs no network.
+public class EmailNotificationSender implements NotificationSender {
+    private int sent;
+
+    public int sent() {
+        return sent;
+    }
+
+    @Override
+    public void sendConfirmation(Reservation reservation) {
+        sent++;
+    }
+}
+
+```
+
+#### Go
+
+```go
+package main
+
+// NotificationSender is what BookingService needs: "tell the guest".
+// How the message travels is not its business.
+type NotificationSender interface {
+	SendConfirmation(reservation *Reservation)
+}
+
+// EmailNotificationSender is simulated: it counts the emails it would send and needs no network.
+type EmailNotificationSender struct {
+	Sent int
+}
+
+func (email *EmailNotificationSender) SendConfirmation(reservation *Reservation) {
+	email.Sent++
+}
+
+```
+
+#### JavaScript
+
+```javascript
+// What BookingService needs: "tell the guest". How the message travels is not its business.
+// The contract is one method:
+//
+//   sendConfirmation(reservation)   tell this guest their booking is confirmed,
+//                                   or throw when the message cannot be sent
+//
+// Simulated: counts the messages it would send and needs no network.
+export class EmailNotificationSender {
+  sent = 0;
+
+  sendConfirmation(reservation) {
+    this.sent += 1;
+  }
+}
+
+```
+
+#### Dart
+
+```dart
+// lib/notifications.dart
+import 'domain.dart';
+
+// What BookingService needs: "tell the guest". How the message travels is not its business.
+abstract interface class NotificationSender {
+  void sendConfirmation(Reservation reservation);
+}
+
+// Simulated: counts the emails it would send and needs no network.
+class EmailNotificationSender implements NotificationSender {
+  int sent = 0;
+
+  @override
+  void sendConfirmation(Reservation reservation) => sent++;
+}
+
+```
+
 ### 5.2 · The storage promise and the list store
 
 Same move for storage: the interface lists what BookingService needs, and the list-based store keeps that promise.
@@ -1128,6 +1750,211 @@ class InMemoryReservationStore:
 
     def count_confirmed(self, room: Room, stay: DateRange) -> int:
         return sum(1 for row in self._rows if row.blocks(room, stay))
+
+```
+
+#### Java
+
+```java
+// src/main/java/hotelbooking/ReservationStore.java
+package hotelbooking;
+
+// What BookingService needs from storage. Today a list in memory; from P07 a database.
+public interface ReservationStore {
+    int count();
+
+    boolean hasOverlap(Room room, DateRange stay);
+
+    void save(Reservation reservation);
+
+    // Returns null when no reservation has that id.
+    Reservation find(String id);
+
+    int countConfirmed(Room room, DateRange stay);
+}
+// src/main/java/hotelbooking/InMemoryReservationStore.java
+package hotelbooking;
+
+import java.util.ArrayList;
+import java.util.List;
+
+// Keeps reservations in a list. P07 adds a PostgreSQL store with the same interface.
+public class InMemoryReservationStore implements ReservationStore {
+    private final List<Reservation> rows = new ArrayList<>();
+
+    @Override
+    public int count() {
+        return rows.size();
+    }
+
+    @Override
+    public boolean hasOverlap(Room room, DateRange stay) {
+        return rows.stream().anyMatch(row -> row.blocks(room, stay));
+    }
+
+    @Override
+    public void save(Reservation reservation) {
+        rows.add(reservation);
+    }
+
+    @Override
+    public Reservation find(String id) {
+        return rows.stream().filter(row -> row.id().equals(id)).findFirst().orElse(null);
+    }
+
+    @Override
+    public int countConfirmed(Room room, DateRange stay) {
+        return (int) rows.stream().filter(row -> row.blocks(room, stay)).count();
+    }
+}
+
+```
+
+#### Go
+
+```go
+package main
+
+// ReservationStore is what BookingService needs from storage.
+// Today a list in memory; from P07 a database.
+type ReservationStore interface {
+	Count() int
+	HasOverlap(room Room, stay DateRange) bool
+	Save(reservation *Reservation)
+	Find(id string) *Reservation
+	CountConfirmed(room Room, stay DateRange) int
+}
+
+// InMemoryReservationStore keeps reservations in a list.
+// P07 adds a PostgreSQL store with the same methods.
+type InMemoryReservationStore struct {
+	rows []*Reservation
+}
+
+func (store *InMemoryReservationStore) Count() int {
+	return len(store.rows)
+}
+
+func (store *InMemoryReservationStore) HasOverlap(room Room, stay DateRange) bool {
+	for _, row := range store.rows {
+		if row.Blocks(room, stay) {
+			return true
+		}
+	}
+	return false
+}
+
+func (store *InMemoryReservationStore) Save(reservation *Reservation) {
+	store.rows = append(store.rows, reservation)
+}
+
+// Returns nil when no reservation has that id.
+func (store *InMemoryReservationStore) Find(id string) *Reservation {
+	for _, row := range store.rows {
+		if row.ID == id {
+			return row
+		}
+	}
+	return nil
+}
+
+func (store *InMemoryReservationStore) CountConfirmed(room Room, stay DateRange) int {
+	confirmed := 0
+	for _, row := range store.rows {
+		if row.Blocks(room, stay) {
+			confirmed++
+		}
+	}
+	return confirmed
+}
+
+```
+
+#### JavaScript
+
+```javascript
+// What BookingService needs from storage. JavaScript has no interface keyword, so the
+// contract is written down here and every store keeps to it:
+//
+//   count                       how many reservations are saved
+//   hasOverlap(room, stay)      is a Confirmed reservation already using those nights?
+//   save(reservation)           keep this reservation
+//   find(id)                    the reservation with that id, or null
+//   countConfirmed(room, stay)  how many Confirmed reservations use those nights
+//
+// Today a list in memory; from P07 a database with the same five members.
+export class InMemoryReservationStore {
+  #rows = [];
+
+  get count() {
+    return this.#rows.length;
+  }
+
+  hasOverlap(room, stay) {
+    return this.#rows.some(row => row.blocks(room, stay));
+  }
+
+  save(reservation) {
+    this.#rows.push(reservation);
+  }
+
+  // Returns null when no reservation has that id.
+  find(id) {
+    return this.#rows.find(row => row.id === id) ?? null;
+  }
+
+  countConfirmed(room, stay) {
+    return this.#rows.filter(row => row.blocks(room, stay)).length;
+  }
+}
+
+```
+
+#### Dart
+
+```dart
+// lib/stores.dart
+import 'domain.dart';
+
+// What BookingService needs from storage. Today a list in memory; from P07 a database.
+abstract interface class ReservationStore {
+  int get count;
+
+  bool hasOverlap(Room room, DateRange stay);
+
+  void save(Reservation reservation);
+
+  // Returns null when no reservation has that id.
+  Reservation? find(String id);
+
+  int countConfirmed(Room room, DateRange stay);
+}
+
+// Keeps reservations in a list. P07 adds a PostgreSQL store with the same interface.
+class InMemoryReservationStore implements ReservationStore {
+  final List<Reservation> _rows = [];
+
+  @override
+  int get count => _rows.length;
+
+  @override
+  bool hasOverlap(Room room, DateRange stay) => _rows.any((row) => row.blocks(room, stay));
+
+  @override
+  void save(Reservation reservation) => _rows.add(reservation);
+
+  @override
+  Reservation? find(String id) {
+    for (final row in _rows) {
+      if (row.id == id) return row;
+    }
+    return null;
+  }
+
+  @override
+  int countConfirmed(Room room, DateRange stay) =>
+      _rows.where((row) => row.blocks(room, stay)).length;
+}
 
 ```
 
@@ -1230,9 +2057,247 @@ class BookingService:
 
 ```
 
+#### Java
+
+```java
+// src/main/java/hotelbooking/BookingService.java
+package hotelbooking;
+
+import java.util.List;
+
+// Depends only on the two interfaces; Main decides which store and sender to use.
+public class BookingService {
+    private final List<Room> rooms;
+    private final ReservationStore store;
+    private final NotificationSender notifications;
+    private final int slowStepMs;
+
+    public BookingService(List<Room> rooms, ReservationStore store, NotificationSender notifications) {
+        this(rooms, store, notifications, 0);
+    }
+
+    public BookingService(List<Room> rooms, ReservationStore store, NotificationSender notifications, int slowStepMs) {
+        this.rooms = rooms;
+        this.store = store;
+        this.notifications = notifications;
+        this.slowStepMs = slowStepMs;
+    }
+
+    public List<Room> findFreeRooms(DateRange stay) {
+        return rooms.stream().filter(room -> !store.hasOverlap(room, stay)).toList();
+    }
+
+    public BookingResult reserve(Guest guest, Room room, DateRange stay) {
+        if (!stay.isValid()) return new BookingResult("InvalidDates");
+        if (store.hasOverlap(room, stay)) return new BookingResult("Unavailable");
+
+        pause(); // does nothing normally; the race demo makes this step slow
+
+        Reservation reservation = new Reservation("R" + (101 + store.count()), guest, room, stay);
+        store.save(reservation);
+        notifications.sendConfirmation(reservation);
+        return new BookingResult("Accepted", reservation.id());
+    }
+
+    public boolean cancel(String reservationId) {
+        Reservation reservation = store.find(reservationId);
+        return reservation != null && reservation.cancel();
+    }
+
+    private void pause() {
+        try {
+            Thread.sleep(slowStepMs);
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+// src/main/java/hotelbooking/BookingResult.java
+package hotelbooking;
+
+public record BookingResult(String outcome, String reservationId) {
+    public BookingResult(String outcome) {
+        this(outcome, null);
+    }
+
+    @Override
+    public String toString() {
+        return reservationId == null ? outcome : outcome + " " + reservationId;
+    }
+}
+
+```
+
+#### Go
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type BookingResult struct {
+	Outcome       string
+	ReservationID string
+}
+
+// Printing a BookingResult uses this method, the way ToString does in C#.
+func (result BookingResult) String() string {
+	if result.ReservationID == "" {
+		return result.Outcome
+	}
+	return result.Outcome + " " + result.ReservationID
+}
+
+// BookingService depends only on the two interfaces; main decides which store and sender to use.
+type BookingService struct {
+	rooms         []Room
+	store         ReservationStore
+	notifications NotificationSender
+	slowStep      time.Duration
+}
+
+func NewBookingService(rooms []Room, store ReservationStore, notifications NotificationSender, slowStep time.Duration) *BookingService {
+	return &BookingService{rooms: rooms, store: store, notifications: notifications, slowStep: slowStep}
+}
+
+func (service *BookingService) FindFreeRooms(stay DateRange) []Room {
+	free := []Room{}
+	for _, room := range service.rooms {
+		if !service.store.HasOverlap(room, stay) {
+			free = append(free, room)
+		}
+	}
+	return free
+}
+
+func (service *BookingService) Reserve(guest Guest, room Room, stay DateRange) BookingResult {
+	if !stay.IsValid() {
+		return BookingResult{Outcome: "InvalidDates"}
+	}
+	if service.store.HasOverlap(room, stay) {
+		return BookingResult{Outcome: "Unavailable"}
+	}
+
+	time.Sleep(service.slowStep) // zero normally; the race demo makes this step slow
+
+	reservation := NewReservation(fmt.Sprintf("R%d", 101+service.store.Count()), guest, room, stay)
+	service.store.Save(reservation)
+	service.notifications.SendConfirmation(reservation)
+	return BookingResult{Outcome: "Accepted", ReservationID: reservation.ID}
+}
+
+func (service *BookingService) Cancel(reservationID string) bool {
+	reservation := service.store.Find(reservationID)
+	return reservation != nil && reservation.Cancel()
+}
+
+```
+
+#### JavaScript
+
+```javascript
+import { Reservation } from './domain.js';
+
+// A pause that lets other requests run while this one waits.
+const wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+export class BookingResult {
+  constructor(outcome, reservationId = null) {
+    this.outcome = outcome;
+    this.reservationId = reservationId;
+  }
+
+  toString() {
+    return this.reservationId === null ? this.outcome : `${this.outcome} ${this.reservationId}`;
+  }
+}
+
+// Depends only on the two contracts; main.js decides which store and sender to use.
+export class BookingService {
+  constructor(rooms, store, notifications, slowStepMs = 0) {
+    this.rooms = rooms;
+    this.store = store;
+    this.notifications = notifications;
+    this.slowStepMs = slowStepMs;
+  }
+
+  findFreeRooms(stay) {
+    return this.rooms.filter(room => !this.store.hasOverlap(room, stay));
+  }
+
+  async reserve(guest, room, stay) {
+    if (!stay.isValid()) return new BookingResult('InvalidDates');
+    if (this.store.hasOverlap(room, stay)) return new BookingResult('Unavailable');
+
+    await wait(this.slowStepMs); // zero normally; the race demo makes this step slow
+
+    const reservation = new Reservation(`R${101 + this.store.count}`, guest, room, stay);
+    this.store.save(reservation);
+    this.notifications.sendConfirmation(reservation);
+    return new BookingResult('Accepted', reservation.id);
+  }
+
+  cancel(reservationId) {
+    return this.store.find(reservationId)?.cancel() ?? false;
+  }
+}
+
+```
+
+#### Dart
+
+```dart
+// lib/booking.dart
+import 'domain.dart';
+import 'notifications.dart';
+import 'stores.dart';
+
+class BookingResult {
+  BookingResult(this.outcome, [this.reservationId]);
+
+  final String outcome;
+  final String? reservationId;
+
+  @override
+  String toString() => reservationId == null ? outcome : '$outcome $reservationId';
+}
+
+// Depends only on the two interfaces; bin/main.dart decides which store and sender to use.
+class BookingService {
+  BookingService(this.rooms, this.store, this.notifications, {this.slowStep = Duration.zero});
+
+  final List<Room> rooms;
+  final ReservationStore store;
+  final NotificationSender notifications;
+  final Duration slowStep;
+
+  List<Room> findFreeRooms(DateRange stay) =>
+      rooms.where((room) => !store.hasOverlap(room, stay)).toList();
+
+  Future<BookingResult> reserve(Guest guest, Room room, DateRange stay) async {
+    if (!stay.isValid()) return BookingResult('InvalidDates');
+    if (store.hasOverlap(room, stay)) return BookingResult('Unavailable');
+
+    // A pause that lets other requests run while this one waits.
+    await Future<void>.delayed(slowStep);
+
+    final reservation = Reservation('R${101 + store.count}', guest, room, stay);
+    store.save(reservation);
+    notifications.sendConfirmation(reservation);
+    return BookingResult('Accepted', reservation.id);
+  }
+
+  bool cancel(String reservationId) => store.find(reservationId)?.cancel() ?? false;
+}
+
+```
+
 ### 5.4 · The data classes get their own files
 
-C#: one file per type, each starting with “namespace HotelBooking;”. Python: the data classes go into domain.py, and __init__.py lets other files import everything from hotel_booking.
+The data classes move out of the one big file into the place your language keeps them: one file per type in C# and Java, a single domain module in Python, Go, JavaScript and Dart. Nothing inside them changes.
 
 ### 5.4
 
@@ -1375,9 +2440,288 @@ __all__ = [
 
 ```
 
+#### Java
+
+```java
+// src/main/java/hotelbooking/DateRange.java
+package hotelbooking;
+
+import java.time.LocalDate;
+
+// The stay: check-in day included, check-out day excluded (half-open).
+public record DateRange(LocalDate checkIn, LocalDate checkOut) {
+    public boolean isValid() {
+        return checkOut.isAfter(checkIn);
+    }
+
+    // Two stays overlap when they share at least one night.
+    public boolean overlaps(DateRange other) {
+        return checkIn.isBefore(other.checkOut) && other.checkIn.isBefore(checkOut);
+    }
+}
+// src/main/java/hotelbooking/Guest.java
+package hotelbooking;
+
+public record Guest(String name, String email) {}
+// src/main/java/hotelbooking/Room.java
+package hotelbooking;
+
+public record Room(String number, String type) {}
+// src/main/java/hotelbooking/ReservationStatus.java
+package hotelbooking;
+
+public enum ReservationStatus { CONFIRMED, CANCELLED }
+// src/main/java/hotelbooking/Reservation.java
+package hotelbooking;
+
+public class Reservation {
+    private final String id;
+    private final Guest guest;
+    private final Room room;
+    private final DateRange stay;
+    private ReservationStatus status = ReservationStatus.CONFIRMED;
+
+    public Reservation(String id, Guest guest, Room room, DateRange stay) {
+        this.id = id;
+        this.guest = guest;
+        this.room = room;
+        this.stay = stay;
+    }
+
+    public String id() {
+        return id;
+    }
+
+    public Guest guest() {
+        return guest;
+    }
+
+    public ReservationStatus status() {
+        return status;
+    }
+
+    // A reservation blocks a request when it is still Confirmed for the same room and shares a night.
+    public boolean blocks(Room room, DateRange stay) {
+        return status == ReservationStatus.CONFIRMED && this.room.equals(room) && this.stay.overlaps(stay);
+    }
+
+    public boolean cancel() {
+        if (status == ReservationStatus.CANCELLED) return false;
+        status = ReservationStatus.CANCELLED;
+        return true;
+    }
+}
+
+```
+
+#### Go
+
+```go
+package main
+
+import "time"
+
+// The stay: check-in day included, check-out day excluded (half-open).
+type DateRange struct {
+	CheckIn  time.Time
+	CheckOut time.Time
+}
+
+func (stay DateRange) IsValid() bool {
+	return stay.CheckOut.After(stay.CheckIn)
+}
+
+// Two stays overlap when they share at least one night.
+func (stay DateRange) Overlaps(other DateRange) bool {
+	return stay.CheckIn.Before(other.CheckOut) && other.CheckIn.Before(stay.CheckOut)
+}
+
+type Guest struct {
+	Name  string
+	Email string
+}
+
+type Room struct {
+	Number string
+	Type   string
+}
+
+// Go has no enum keyword: a named string type with two constants does the same job.
+type ReservationStatus string
+
+const (
+	Confirmed ReservationStatus = "Confirmed"
+	Cancelled ReservationStatus = "Cancelled"
+)
+
+type Reservation struct {
+	ID     string
+	Guest  Guest
+	Room   Room
+	Stay   DateRange
+	Status ReservationStatus
+}
+
+func NewReservation(id string, guest Guest, room Room, stay DateRange) *Reservation {
+	return &Reservation{ID: id, Guest: guest, Room: room, Stay: stay, Status: Confirmed}
+}
+
+// A reservation blocks a request when it is still Confirmed for the same room and shares a night.
+func (reservation *Reservation) Blocks(room Room, stay DateRange) bool {
+	return reservation.Status == Confirmed && reservation.Room == room && reservation.Stay.Overlaps(stay)
+}
+
+func (reservation *Reservation) Cancel() bool {
+	if reservation.Status == Cancelled {
+		return false
+	}
+	reservation.Status = Cancelled
+	return true
+}
+
+```
+
+#### JavaScript
+
+```javascript
+// The stay: check-in day included, check-out day excluded (half-open).
+export class DateRange {
+  constructor(checkIn, checkOut) {
+    this.checkIn = checkIn;
+    this.checkOut = checkOut;
+  }
+
+  isValid() {
+    return this.checkOut > this.checkIn;
+  }
+
+  // Two stays overlap when they share at least one night.
+  overlaps(other) {
+    return this.checkIn < other.checkOut && other.checkIn < this.checkOut;
+  }
+}
+
+export class Guest {
+  constructor(name, email) {
+    this.name = name;
+    this.email = email;
+  }
+}
+
+export class Room {
+  constructor(number, type) {
+    this.number = number;
+    this.type = type;
+  }
+
+  // JavaScript compares objects by identity, so Room says when two values mean the same room.
+  equals(other) {
+    return this.number === other.number && this.type === other.type;
+  }
+}
+
+// JavaScript has no enum keyword: a frozen object with two values does the same job.
+export const ReservationStatus = Object.freeze({ Confirmed: 'Confirmed', Cancelled: 'Cancelled' });
+
+export class Reservation {
+  constructor(id, guest, room, stay) {
+    this.id = id;
+    this.guest = guest;
+    this.room = room;
+    this.stay = stay;
+    this.status = ReservationStatus.Confirmed;
+  }
+
+  // A reservation blocks a request when it is still Confirmed for the same room and shares a night.
+  blocks(room, stay) {
+    return this.status === ReservationStatus.Confirmed && this.room.equals(room) && this.stay.overlaps(stay);
+  }
+
+  cancel() {
+    if (this.status === ReservationStatus.Cancelled) return false;
+    this.status = ReservationStatus.Cancelled;
+    return true;
+  }
+}
+
+```
+
+#### Dart
+
+```dart
+// lib/domain.dart
+// The stay: check-in day included, check-out day excluded (half-open).
+class DateRange {
+  DateRange(this.checkIn, this.checkOut);
+
+  final DateTime checkIn;
+  final DateTime checkOut;
+
+  bool isValid() => checkOut.isAfter(checkIn);
+
+  // Two stays overlap when they share at least one night.
+  bool overlaps(DateRange other) =>
+      checkIn.isBefore(other.checkOut) && other.checkIn.isBefore(checkOut);
+}
+
+class Guest {
+  Guest(this.name, this.email);
+
+  final String name;
+  final String email;
+}
+
+class Room {
+  Room(this.number, this.type);
+
+  final String number;
+  final String type;
+
+  // Dart compares objects by identity until a class says what equal means.
+  @override
+  bool operator ==(Object other) => other is Room && other.number == number && other.type == type;
+
+  @override
+  int get hashCode => Object.hash(number, type);
+}
+
+enum ReservationStatus { confirmed, cancelled }
+
+class Reservation {
+  Reservation(this.id, this.guest, this.room, this.stay);
+
+  final String id;
+  final Guest guest;
+  final Room room;
+  final DateRange stay;
+  ReservationStatus status = ReservationStatus.confirmed;
+
+  // A reservation blocks a request when it is still Confirmed for the same room and shares a night.
+  bool blocks(Room room, DateRange stay) =>
+      status == ReservationStatus.confirmed && this.room == room && this.stay.overlaps(stay);
+
+  bool cancel() {
+    if (status == ReservationStatus.cancelled) return false;
+    status = ReservationStatus.cancelled;
+    return true;
+  }
+}
+
+// lib/hotel_booking.dart
+/// Hotel booking app after P04: the P03 app split into libraries,
+/// with its dependencies behind interfaces.
+library;
+
+export 'booking.dart';
+export 'domain.dart';
+export 'notifications.dart';
+export 'stores.dart';
+
+```
+
 ### 5.5 · Program wires everything together
 
-Program.cs (C#) or main.py (Python) is now the only place that chooses the real store and sender and passes them into BookingService.
+Your program’s entry point is now the only place that chooses the real store and the real sender and passes them into BookingService.
 
 **Who creates the objects now?** In short: One place, at the start of the program, creates the real objects and passes them in. This place is often called the composition root. BookingService never creates its own helpers; it receives them.
 
@@ -1549,9 +2893,344 @@ if __name__ == "__main__":
 
 ```
 
+#### Java
+
+```java
+// P04 · Hotel booking: the same app as P03, in a cleaner structure.
+// java -cp target/classes hotelbooking.Main           -> the normal demo
+// java -cp target/classes hotelbooking.Main --race    -> two guests book the same room at the same moment
+package hotelbooking;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class Main {
+    static final Room R7 = new Room("R7", "Standard");
+    static final Room R8 = new Room("R8", "Deluxe");
+    static final Guest MAYA = new Guest("Maya", "maya@example.com");
+    static final Guest OMAR = new Guest("Omar", "omar@example.com");
+    static final Guest NORA = new Guest("Nora", "nora@example.com");
+
+    public static void main(String[] args) throws InterruptedException {
+        if (List.of(args).contains("--race")) runRace(); else runDemo();
+    }
+
+    static void runDemo() {
+        // The one place that chooses the real store and sender.
+        InMemoryReservationStore store = new InMemoryReservationStore();
+        EmailNotificationSender email = new EmailNotificationSender();
+        BookingService service = new BookingService(List.of(R7, R8), store, email);
+
+        System.out.println("Free rooms 12-14 Nov: " + names(service.findFreeRooms(nov(12, 14))));
+        System.out.println("Maya books R7 12-14 Nov: " + service.reserve(MAYA, R7, nov(12, 14)));
+        System.out.println("Omar books R7 13-15 Nov: " + service.reserve(OMAR, R7, nov(13, 15)));
+        System.out.println("Nora books R7 14-16 Nov: " + service.reserve(NORA, R7, nov(14, 16)));
+        System.out.println("Omar books R8 15-15 Nov: " + service.reserve(OMAR, R8, nov(15, 15)));
+        System.out.println("Free rooms 12-14 Nov: " + names(service.findFreeRooms(nov(12, 14))));
+        System.out.println("Maya cancels R101: " + boolText(service.cancel("R101")));
+        System.out.println("Free rooms 12-14 Nov: " + names(service.findFreeRooms(nov(12, 14))));
+        System.out.println("Confirmation emails sent: " + email.sent());
+    }
+
+    static void runRace() throws InterruptedException {
+        InMemoryReservationStore store = new InMemoryReservationStore();
+        // Each request now spends half a second between checking and saving.
+        BookingService service = new BookingService(List.of(R7, R8), store, new EmailNotificationSender(), 500);
+        DateRange stay = nov(12, 14);
+        BookingResult[] results = new BookingResult[2];
+
+        System.out.println("Maya and Omar both book R7 for 12-14 Nov at the same moment...");
+        Thread mayaRequest = new Thread(() -> results[0] = service.reserve(MAYA, R7, stay));
+        Thread omarRequest = new Thread(() -> results[1] = service.reserve(OMAR, R7, stay));
+        mayaRequest.start();
+        Thread.sleep(100); // Omar clicks a moment after Maya
+        omarRequest.start();
+        mayaRequest.join();
+        omarRequest.join();
+
+        System.out.println("Maya: " + results[0]);
+        System.out.println("Omar: " + results[1]);
+        int confirmed = store.countConfirmed(R7, stay);
+        System.out.println("Confirmed reservations for R7 on 12-14 Nov: " + confirmed);
+        System.out.println(confirmed > 1
+            ? "Double booking! Both requests checked before either one saved."
+            : "Only one guest has R7.");
+    }
+
+    static DateRange nov(int checkIn, int checkOut) {
+        return new DateRange(LocalDate.of(2026, 11, checkIn), LocalDate.of(2026, 11, checkOut));
+    }
+
+    static String names(List<Room> rooms) {
+        return rooms.stream().map(Room::number).collect(Collectors.joining(", "));
+    }
+
+    // Java prints booleans as true/false; the course output says True, so the demo spells it out.
+    static String boolText(boolean value) {
+        return value ? "True" : "False";
+    }
+}
+
+```
+
+#### Go
+
+```go
+// P04 · Hotel booking: the same app as P03, in a cleaner structure.
+// go run .          -> the normal demo
+// go run . --race   -> two guests book the same room at the same moment
+package main
+
+import (
+	"fmt"
+	"os"
+	"slices"
+	"strings"
+	"sync"
+	"time"
+)
+
+var (
+	r7   = Room{Number: "R7", Type: "Standard"}
+	r8   = Room{Number: "R8", Type: "Deluxe"}
+	maya = Guest{Name: "Maya", Email: "maya@example.com"}
+	omar = Guest{Name: "Omar", Email: "omar@example.com"}
+	nora = Guest{Name: "Nora", Email: "nora@example.com"}
+)
+
+func main() {
+	if slices.Contains(os.Args[1:], "--race") {
+		runRace()
+	} else {
+		runDemo()
+	}
+}
+
+func runDemo() {
+	// The one place that chooses the real store and sender.
+	store := &InMemoryReservationStore{}
+	email := &EmailNotificationSender{}
+	service := NewBookingService([]Room{r7, r8}, store, email, 0)
+
+	fmt.Printf("Free rooms 12-14 Nov: %s\n", names(service.FindFreeRooms(nov(12, 14))))
+	fmt.Printf("Maya books R7 12-14 Nov: %s\n", service.Reserve(maya, r7, nov(12, 14)))
+	fmt.Printf("Omar books R7 13-15 Nov: %s\n", service.Reserve(omar, r7, nov(13, 15)))
+	fmt.Printf("Nora books R7 14-16 Nov: %s\n", service.Reserve(nora, r7, nov(14, 16)))
+	fmt.Printf("Omar books R8 15-15 Nov: %s\n", service.Reserve(omar, r8, nov(15, 15)))
+	fmt.Printf("Free rooms 12-14 Nov: %s\n", names(service.FindFreeRooms(nov(12, 14))))
+	fmt.Printf("Maya cancels R101: %s\n", boolText(service.Cancel("R101")))
+	fmt.Printf("Free rooms 12-14 Nov: %s\n", names(service.FindFreeRooms(nov(12, 14))))
+	fmt.Printf("Confirmation emails sent: %d\n", email.Sent)
+}
+
+func runRace() {
+	store := &InMemoryReservationStore{}
+	// Each request now spends half a second between checking and saving.
+	service := NewBookingService([]Room{r7, r8}, store, &EmailNotificationSender{}, 500*time.Millisecond)
+	stay := nov(12, 14)
+	var mayaResult, omarResult BookingResult
+	var requests sync.WaitGroup
+
+	fmt.Println("Maya and Omar both book R7 for 12-14 Nov at the same moment...")
+	requests.Add(2)
+	go func() {
+		defer requests.Done()
+		mayaResult = service.Reserve(maya, r7, stay)
+	}()
+	time.Sleep(100 * time.Millisecond) // Omar clicks a moment after Maya
+	go func() {
+		defer requests.Done()
+		omarResult = service.Reserve(omar, r7, stay)
+	}()
+	requests.Wait()
+
+	fmt.Printf("Maya: %s\n", mayaResult)
+	fmt.Printf("Omar: %s\n", omarResult)
+	confirmed := store.CountConfirmed(r7, stay)
+	fmt.Printf("Confirmed reservations for R7 on 12-14 Nov: %d\n", confirmed)
+	if confirmed > 1 {
+		fmt.Println("Double booking! Both requests checked before either one saved.")
+	} else {
+		fmt.Println("Only one guest has R7.")
+	}
+}
+
+func nov(checkIn, checkOut int) DateRange {
+	return DateRange{
+		CheckIn:  time.Date(2026, time.November, checkIn, 0, 0, 0, 0, time.UTC),
+		CheckOut: time.Date(2026, time.November, checkOut, 0, 0, 0, 0, time.UTC),
+	}
+}
+
+func names(rooms []Room) string {
+	numbers := make([]string, len(rooms))
+	for index, room := range rooms {
+		numbers[index] = room.Number
+	}
+	return strings.Join(numbers, ", ")
+}
+
+// Go prints booleans as true/false; the course output says True, so the demo spells it out.
+func boolText(value bool) string {
+	if value {
+		return "True"
+	}
+	return "False"
+}
+
+```
+
+#### JavaScript
+
+```javascript
+// P04 · Hotel booking: the same app as P03, in a cleaner structure.
+// node main.js          -> the normal demo
+// node main.js --race   -> two guests book the same room at the same moment
+import { BookingService } from './src/booking.js';
+import { DateRange, Guest, Room } from './src/domain.js';
+import { EmailNotificationSender } from './src/notifications.js';
+import { InMemoryReservationStore } from './src/stores.js';
+
+const r7 = new Room('R7', 'Standard');
+const r8 = new Room('R8', 'Deluxe');
+const maya = new Guest('Maya', 'maya@example.com');
+const omar = new Guest('Omar', 'omar@example.com');
+const nora = new Guest('Nora', 'nora@example.com');
+
+const nov = (checkIn, checkOut) =>
+  new DateRange(new Date(Date.UTC(2026, 10, checkIn)), new Date(Date.UTC(2026, 10, checkOut)));
+
+const names = rooms => rooms.map(room => room.number).join(', ');
+
+const wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+// JavaScript prints booleans as true/false; the course output says True, so the demo spells it out.
+const boolText = value => (value ? 'True' : 'False');
+
+async function runDemo() {
+  // The one place that chooses the real store and sender.
+  const store = new InMemoryReservationStore();
+  const email = new EmailNotificationSender();
+  const service = new BookingService([r7, r8], store, email);
+
+  console.log(`Free rooms 12-14 Nov: ${names(service.findFreeRooms(nov(12, 14)))}`);
+  console.log(`Maya books R7 12-14 Nov: ${await service.reserve(maya, r7, nov(12, 14))}`);
+  console.log(`Omar books R7 13-15 Nov: ${await service.reserve(omar, r7, nov(13, 15))}`);
+  console.log(`Nora books R7 14-16 Nov: ${await service.reserve(nora, r7, nov(14, 16))}`);
+  console.log(`Omar books R8 15-15 Nov: ${await service.reserve(omar, r8, nov(15, 15))}`);
+  console.log(`Free rooms 12-14 Nov: ${names(service.findFreeRooms(nov(12, 14)))}`);
+  console.log(`Maya cancels R101: ${boolText(service.cancel('R101'))}`);
+  console.log(`Free rooms 12-14 Nov: ${names(service.findFreeRooms(nov(12, 14)))}`);
+  console.log(`Confirmation emails sent: ${email.sent}`);
+}
+
+async function runRace() {
+  const store = new InMemoryReservationStore();
+  // Each request now spends half a second between checking and saving.
+  const service = new BookingService([r7, r8], store, new EmailNotificationSender(), 500);
+  const stay = nov(12, 14);
+
+  console.log('Maya and Omar both book R7 for 12-14 Nov at the same moment...');
+  const mayaRequest = service.reserve(maya, r7, stay);
+  await wait(100); // Omar clicks a moment after Maya
+  const omarRequest = service.reserve(omar, r7, stay);
+  const [mayaResult, omarResult] = await Promise.all([mayaRequest, omarRequest]);
+
+  console.log(`Maya: ${mayaResult}`);
+  console.log(`Omar: ${omarResult}`);
+  const confirmed = store.countConfirmed(r7, stay);
+  console.log(`Confirmed reservations for R7 on 12-14 Nov: ${confirmed}`);
+  console.log(confirmed > 1
+    ? 'Double booking! Both requests checked before either one saved.'
+    : 'Only one guest has R7.');
+}
+
+if (process.argv.includes('--race')) runRace(); else runDemo();
+
+```
+
+#### Dart
+
+```dart
+// P04 · Hotel booking: the same app as P03, in a cleaner structure.
+// dart run bin/main.dart          -> the normal demo
+// dart run bin/main.dart --race   -> two guests book the same room at the same moment
+import 'package:hotel_booking/hotel_booking.dart';
+
+final r7 = Room('R7', 'Standard');
+final r8 = Room('R8', 'Deluxe');
+final maya = Guest('Maya', 'maya@example.com');
+final omar = Guest('Omar', 'omar@example.com');
+final nora = Guest('Nora', 'nora@example.com');
+
+DateRange nov(int checkIn, int checkOut) =>
+    DateRange(DateTime.utc(2026, 11, checkIn), DateTime.utc(2026, 11, checkOut));
+
+String names(List<Room> rooms) => rooms.map((room) => room.number).join(', ');
+
+// Dart prints booleans as true/false; the course output says True, so the demo spells it out.
+String boolText(bool value) => value ? 'True' : 'False';
+
+Future<void> main(List<String> args) async {
+  if (args.contains('--race')) {
+    await runRace();
+  } else {
+    await runDemo();
+  }
+}
+
+Future<void> runDemo() async {
+  // The one place that chooses the real store and sender.
+  final store = InMemoryReservationStore();
+  final email = EmailNotificationSender();
+  final service = BookingService([r7, r8], store, email);
+
+  print('Free rooms 12-14 Nov: ${names(service.findFreeRooms(nov(12, 14)))}');
+  print('Maya books R7 12-14 Nov: ${await service.reserve(maya, r7, nov(12, 14))}');
+  print('Omar books R7 13-15 Nov: ${await service.reserve(omar, r7, nov(13, 15))}');
+  print('Nora books R7 14-16 Nov: ${await service.reserve(nora, r7, nov(14, 16))}');
+  print('Omar books R8 15-15 Nov: ${await service.reserve(omar, r8, nov(15, 15))}');
+  print('Free rooms 12-14 Nov: ${names(service.findFreeRooms(nov(12, 14)))}');
+  print('Maya cancels R101: ${boolText(service.cancel('R101'))}');
+  print('Free rooms 12-14 Nov: ${names(service.findFreeRooms(nov(12, 14)))}');
+  print('Confirmation emails sent: ${email.sent}');
+}
+
+Future<void> runRace() async {
+  final store = InMemoryReservationStore();
+  // Each request now spends half a second between checking and saving.
+  final service = BookingService(
+    [r7, r8],
+    store,
+    EmailNotificationSender(),
+    slowStep: const Duration(milliseconds: 500),
+  );
+  final stay = nov(12, 14);
+
+  print('Maya and Omar both book R7 for 12-14 Nov at the same moment...');
+  final mayaRequest = service.reserve(maya, r7, stay);
+  // Omar clicks a moment after Maya
+  await Future<void>.delayed(const Duration(milliseconds: 100));
+  final omarRequest = service.reserve(omar, r7, stay);
+  final results = await Future.wait([mayaRequest, omarRequest]);
+
+  print('Maya: ${results[0]}');
+  print('Omar: ${results[1]}');
+  final confirmed = store.countConfirmed(r7, stay);
+  print('Confirmed reservations for R7 on 12-14 Nov: $confirmed');
+  print(
+    confirmed > 1
+        ? 'Double booking! Both requests checked before either one saved.'
+        : 'Only one guest has R7.',
+  );
+}
+
+```
+
 ### 5.6 · The tests use the new names
 
-Only the helper that builds the service changes. C#: also add “using HotelBooking;” at the top of the test file. Python: import the new names from hotel_booking.
+Only the helper that builds the service changes, plus the import or using lines above it. Every test body stays exactly as it was: that is the point of putting the construction in one place.
 
 ### 5.6
 
@@ -1578,9 +3257,65 @@ def new_service():
     return BookingService([R7, R8], store, email), store, email
 ```
 
+#### Java
+
+```java
+    // The only place that builds the service: a refactoring changes this record, not every test.
+    record Fixture(BookingService service, InMemoryReservationStore store, EmailNotificationSender email) {}
+
+    static Fixture newService() {
+        InMemoryReservationStore store = new InMemoryReservationStore();
+        EmailNotificationSender email = new EmailNotificationSender();
+        return new Fixture(new BookingService(List.of(R7, R8), store, email), store, email);
+    }
+```
+
+#### Go
+
+```go
+// The only place that builds the service: a refactoring changes this function, not every test.
+func newService() (*BookingService, *InMemoryReservationStore, *EmailNotificationSender) {
+	store := &InMemoryReservationStore{}
+	email := &EmailNotificationSender{}
+	return NewBookingService([]Room{r7, r8}, store, email, 0), store, email
+}
+```
+
+#### JavaScript
+
+```javascript
+import { BookingService } from './src/booking.js';
+import { DateRange, Guest, Room } from './src/domain.js';
+import { EmailNotificationSender } from './src/notifications.js';
+import { InMemoryReservationStore } from './src/stores.js';
+
+// The only place that builds the service: a refactoring changes this function, not every test.
+function newService() {
+  const store = new InMemoryReservationStore();
+  const email = new EmailNotificationSender();
+  return { service: new BookingService([r7, r8], store, email), store, email };
+}
+```
+
+#### Dart
+
+```dart
+// The only place that builds the service: a refactoring changes this record, not every test.
+({BookingService service, InMemoryReservationStore store, EmailNotificationSender email})
+    newService() {
+  final store = InMemoryReservationStore();
+  final email = EmailNotificationSender();
+  return (
+    service: BookingService([r7, r8], store, email),
+    store: store,
+    email: email,
+  );
+}
+```
+
 ### Your turn · refactor in six moves
 
-After every move, run the tests (dotnet test HotelBooking.Tests or python -m unittest -v). If they turn red, fix that move before the next one.
+After every move, run the tests with the command for your language. If they turn red, fix that move before the next one.
 
 **Python: why the old hotel_booking.py must be deleted** In short: A folder and a file with the same name confuse imports; Python picks the folder. You create a folder hotel_booking/ (a package) while the file hotel_booking.py still exists. “from hotel_booking import …” now reads the folder, and the old file is silently ignored.
 
@@ -1605,12 +3340,12 @@ hotel_booking/          <- Python imports this folder
 hotel_booking.py        <- ignored once the folder exists: delete it
 ```
 
-1. C#: create HotelBooking/INotificationSender.cs and HotelBooking/IReservationStore.cs from 5.1 and 5.2. Python: create the folder hotel_booking/ next to hotel_booking.py (leave the old file for now).
-2. C#: in Program.cs, click on EmailSender, press F2 and rename it to EmailNotificationSender, then add “: INotificationSender”. Do the same for ReservationStore → InMemoryReservationStore : IReservationStore. Python: create hotel_booking/notifications.py and stores.py from 5.1 and 5.2.
-3. Change BookingService as in 5.3 (C#: still in Program.cs; Python: create hotel_booking/booking.py), and update the test helper as in 5.6. Run the tests: C# should show 6 passed.
-4. C#: move each class out of Program.cs into its own file under HotelBooking/ (5.1–5.4), with “namespace HotelBooking;” at the top. Python: create hotel_booking/domain.py and __init__.py (5.4).
-5. Make Program.cs (C#) or a new main.py (Python) look like 5.5. C#: add “using HotelBooking;” to the test file. Python: delete hotel_booking.py now that the folder works.
-6. Run the tests one more time: 6 passed (C#) or “Ran 6 tests … OK” (Python).
+1. Open your language’s tab on 5.1 and create the notification file it shows: the promise (the interface) and the email sender that keeps it. Rename EmailSender to EmailNotificationSender; your editor can do it with Rename Symbol (F2 in VS Code), which updates every use at once.
+2. Do the same for storage from 5.2: create the storage file, and rename ReservationStore to InMemoryReservationStore. The name ReservationStore is now free for the promise itself.
+3. Change BookingService as in 5.3 so its constructor asks for the two promises instead of the two concrete classes, and update the test helper as in 5.6. Run the tests: 6 passing.
+4. Move the data classes into their own file or files as in 5.4. Keep the old file until the new ones work, then delete it.
+5. Make your entry point look like 5.5: it is now the only place that picks the real store and the real sender.
+6. Run the tests one more time: still 6 passing, and no test body changed.
 
 **When you finish, you have:** the refactored app in separate files, with BookingService depending only on interfaces, and the same 6 tests green.
 ### Explanation
@@ -1649,6 +3384,39 @@ python main.py
 python main.py --race
 ```
 
+#### Java
+
+```text
+mvn -q test
+mvn -q compile
+java -cp target/classes hotelbooking.Main
+java -cp target/classes hotelbooking.Main --race
+```
+
+#### Go
+
+```text
+go test ./...
+go run .
+go run . --race
+```
+
+#### JavaScript
+
+```text
+node --test
+node main.js
+node main.js --race
+```
+
+#### Dart
+
+```text
+dart test
+dart run bin/main.dart
+dart run bin/main.dart --race
+```
+
 ### The demo must still print exactly this
 
 ### Expected demo output
@@ -1681,6 +3449,62 @@ Free rooms 12-14 Nov: R7, R8
 Confirmation emails sent: 2
 ```
 
+#### Java
+
+```text
+Free rooms 12-14 Nov: R7, R8
+Maya books R7 12-14 Nov: Accepted R101
+Omar books R7 13-15 Nov: Unavailable
+Nora books R7 14-16 Nov: Accepted R102
+Omar books R8 15-15 Nov: InvalidDates
+Free rooms 12-14 Nov: R8
+Maya cancels R101: True
+Free rooms 12-14 Nov: R7, R8
+Confirmation emails sent: 2
+```
+
+#### Go
+
+```text
+Free rooms 12-14 Nov: R7, R8
+Maya books R7 12-14 Nov: Accepted R101
+Omar books R7 13-15 Nov: Unavailable
+Nora books R7 14-16 Nov: Accepted R102
+Omar books R8 15-15 Nov: InvalidDates
+Free rooms 12-14 Nov: R8
+Maya cancels R101: True
+Free rooms 12-14 Nov: R7, R8
+Confirmation emails sent: 2
+```
+
+#### JavaScript
+
+```text
+Free rooms 12-14 Nov: R7, R8
+Maya books R7 12-14 Nov: Accepted R101
+Omar books R7 13-15 Nov: Unavailable
+Nora books R7 14-16 Nov: Accepted R102
+Omar books R8 15-15 Nov: InvalidDates
+Free rooms 12-14 Nov: R8
+Maya cancels R101: True
+Free rooms 12-14 Nov: R7, R8
+Confirmation emails sent: 2
+```
+
+#### Dart
+
+```text
+Free rooms 12-14 Nov: R7, R8
+Maya books R7 12-14 Nov: Accepted R101
+Omar books R7 13-15 Nov: Unavailable
+Nora books R7 14-16 Nov: Accepted R102
+Omar books R8 15-15 Nov: InvalidDates
+Free rooms 12-14 Nov: R8
+Maya cancels R101: True
+Free rooms 12-14 Nov: R7, R8
+Confirmation emails sent: 2
+```
+
 ### The race must still double-book
 
 Refactoring changes the structure, not the behaviour, so the P03 bug is still there. That is correct for today; P09 fixes it.
@@ -1698,6 +3522,46 @@ Double booking! Both requests checked before either one saved.
 ```
 
 #### Python
+
+```text
+Maya and Omar both book R7 for 12-14 Nov at the same moment...
+Maya: Accepted R101
+Omar: Accepted R102
+Confirmed reservations for R7 on 12-14 Nov: 2
+Double booking! Both requests checked before either one saved.
+```
+
+#### Java
+
+```text
+Maya and Omar both book R7 for 12-14 Nov at the same moment...
+Maya: Accepted R101
+Omar: Accepted R102
+Confirmed reservations for R7 on 12-14 Nov: 2
+Double booking! Both requests checked before either one saved.
+```
+
+#### Go
+
+```text
+Maya and Omar both book R7 for 12-14 Nov at the same moment...
+Maya: Accepted R101
+Omar: Accepted R102
+Confirmed reservations for R7 on 12-14 Nov: 2
+Double booking! Both requests checked before either one saved.
+```
+
+#### JavaScript
+
+```text
+Maya and Omar both book R7 for 12-14 Nov at the same moment...
+Maya: Accepted R101
+Omar: Accepted R102
+Confirmed reservations for R7 on 12-14 Nov: 2
+Double booking! Both requests checked before either one saved.
+```
+
+#### Dart
 
 ```text
 Maya and Omar both book R7 for 12-14 Nov at the same moment...
@@ -1818,6 +3682,114 @@ def new_service(failing_sender: bool = False):
     return BookingService([R7, R8], store, sender), store, sender
 ```
 
+#### Java
+
+```java
+// A stand-in sender for tests: remembers what it would send, or fails on purpose.
+class FakeNotificationSender implements NotificationSender {
+    private final boolean fail;
+    final List<String> sent = new ArrayList<>();
+
+    FakeNotificationSender(boolean fail) {
+        this.fail = fail;
+    }
+
+    @Override
+    public void sendConfirmation(Reservation reservation) {
+        if (fail) throw new IllegalStateException("The mail server is down.");
+        sent.add(reservation.id());
+    }
+}
+
+    // The only place that builds the service: after the refactoring it takes any sender.
+    record Fixture(BookingService service, InMemoryReservationStore store, FakeNotificationSender sender) {}
+
+    static Fixture newService(boolean failingSender) {
+        InMemoryReservationStore store = new InMemoryReservationStore();
+        FakeNotificationSender sender = new FakeNotificationSender(failingSender);
+        return new Fixture(new BookingService(List.of(R7, R8), store, sender), store, sender);
+    }
+```
+
+#### Go
+
+```go
+// A stand-in sender for tests: remembers what it would send, or fails on purpose.
+type fakeNotificationSender struct {
+	fail bool
+	sent []string
+}
+
+func (fake *fakeNotificationSender) SendConfirmation(reservation *Reservation) error {
+	if fake.fail {
+		return errors.New("the mail server is down")
+	}
+	fake.sent = append(fake.sent, reservation.ID)
+	return nil
+}
+
+// The only place that builds the service: after the refactoring it takes any sender.
+func newService(failingSender bool) (*BookingService, *InMemoryReservationStore, *fakeNotificationSender) {
+	store := &InMemoryReservationStore{}
+	sender := &fakeNotificationSender{fail: failingSender}
+	return NewBookingService([]Room{r7, r8}, store, sender, 0), store, sender
+}
+```
+
+#### JavaScript
+
+```javascript
+// A stand-in sender for tests: remembers what it would send, or fails on purpose.
+class FakeNotificationSender {
+  constructor(fail = false) {
+    this.fail = fail;
+    this.sent = [];
+  }
+
+  sendConfirmation(reservation) {
+    if (this.fail) throw new Error('The mail server is down.');
+    this.sent.push(reservation.id);
+  }
+}
+
+// The only place that builds the service: after the refactoring it takes any sender.
+function newService(failingSender = false) {
+  const store = new InMemoryReservationStore();
+  const sender = new FakeNotificationSender(failingSender);
+  return { service: new BookingService([r7, r8], store, sender), store, sender };
+}
+```
+
+#### Dart
+
+```dart
+// A stand-in sender for tests: remembers what it would send, or fails on purpose.
+class FakeNotificationSender implements NotificationSender {
+  FakeNotificationSender({this.fail = false});
+
+  final bool fail;
+  final List<String> sent = [];
+
+  @override
+  void sendConfirmation(Reservation reservation) {
+    if (fail) throw StateError('The mail server is down.');
+    sent.add(reservation.id);
+  }
+}
+
+// The only place that builds the service: after the refactoring it takes any sender.
+({BookingService service, InMemoryReservationStore store, FakeNotificationSender sender})
+    newService({bool failingSender = false}) {
+  final store = InMemoryReservationStore();
+  final sender = FakeNotificationSender(fail: failingSender);
+  return (
+    service: BookingService([r7, r8], store, sender),
+    store: store,
+    sender: sender,
+  );
+}
+```
+
 ### 7.2 · A new rule, R6: a failed email must not lose a booking
 
 This is a new behaviour, so it is not a refactoring: write the failing test first, see it fail, then change Reserve.
@@ -1927,7 +3899,6 @@ public record BookingResult(string Outcome, string? ReservationId = null, bool N
 {
     public override string ToString() => ReservationId is null ? Outcome : $"{Outcome} {ReservationId}";
 }
-
 // HotelBooking/BookingService.cs
 namespace HotelBooking;
 
@@ -2030,9 +4001,313 @@ class BookingService:
 
 ```
 
+#### Java
+
+```java
+    @Test
+    void a_failed_confirmation_keeps_the_booking() {
+        Fixture fixture = newService(true);
+        BookingResult result = fixture.service().reserve(MAYA, R7, nov(12, 14));
+        assertEquals("Accepted R101", result.toString());
+        assertTrue(result.notificationFailed());
+        assertEquals(1, fixture.store().count());
+    }
+
+// src/main/java/hotelbooking/BookingResult.java
+package hotelbooking;
+
+public record BookingResult(String outcome, String reservationId, boolean notificationFailed) {
+    public BookingResult(String outcome) {
+        this(outcome, null, false);
+    }
+
+    public BookingResult(String outcome, String reservationId) {
+        this(outcome, reservationId, false);
+    }
+
+    @Override
+    public String toString() {
+        return reservationId == null ? outcome : outcome + " " + reservationId;
+    }
+}
+// src/main/java/hotelbooking/BookingService.java
+package hotelbooking;
+
+import java.util.List;
+
+// Depends only on the two interfaces; Main decides which store and sender to use.
+public class BookingService {
+    private final List<Room> rooms;
+    private final ReservationStore store;
+    private final NotificationSender notifications;
+    private final int slowStepMs;
+
+    public BookingService(List<Room> rooms, ReservationStore store, NotificationSender notifications) {
+        this(rooms, store, notifications, 0);
+    }
+
+    public BookingService(List<Room> rooms, ReservationStore store, NotificationSender notifications, int slowStepMs) {
+        this.rooms = rooms;
+        this.store = store;
+        this.notifications = notifications;
+        this.slowStepMs = slowStepMs;
+    }
+
+    public List<Room> findFreeRooms(DateRange stay) {
+        return rooms.stream().filter(room -> !store.hasOverlap(room, stay)).toList();
+    }
+
+    public BookingResult reserve(Guest guest, Room room, DateRange stay) {
+        if (!stay.isValid()) return new BookingResult("InvalidDates");
+        if (store.hasOverlap(room, stay)) return new BookingResult("Unavailable");
+
+        pause(); // does nothing normally; the race demo makes this step slow
+
+        Reservation reservation = new Reservation("R" + (101 + store.count()), guest, room, stay);
+        store.save(reservation);
+        try {
+            notifications.sendConfirmation(reservation);
+        } catch (RuntimeException failure) {
+            // R6: the booking is already saved, so a failed message must not undo or hide it.
+            return new BookingResult("Accepted", reservation.id(), true);
+        }
+        return new BookingResult("Accepted", reservation.id());
+    }
+
+    public boolean cancel(String reservationId) {
+        Reservation reservation = store.find(reservationId);
+        return reservation != null && reservation.cancel();
+    }
+
+    private void pause() {
+        try {
+            Thread.sleep(slowStepMs);
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+
+```
+
+#### Go
+
+```go
+func TestAFailedConfirmationKeepsTheBooking(t *testing.T) {
+	service, store, _ := newService(true)
+	result := service.Reserve(maya, r7, nov(12, 14))
+	if result.String() != "Accepted R101" {
+		t.Errorf("got %q, want %q", result.String(), "Accepted R101")
+	}
+	if !result.NotificationFailed {
+		t.Error("the result should report the failed confirmation")
+	}
+	if store.Count() != 1 {
+		t.Errorf("saved %d reservations, want 1", store.Count())
+	}
+}
+
+// booking.go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type BookingResult struct {
+	Outcome            string
+	ReservationID      string
+	NotificationFailed bool
+}
+
+// Printing a BookingResult uses this method, the way ToString does in C#.
+func (result BookingResult) String() string {
+	if result.ReservationID == "" {
+		return result.Outcome
+	}
+	return result.Outcome + " " + result.ReservationID
+}
+
+// BookingService depends only on the two interfaces; main decides which store and sender to use.
+type BookingService struct {
+	rooms         []Room
+	store         ReservationStore
+	notifications NotificationSender
+	slowStep      time.Duration
+}
+
+func NewBookingService(rooms []Room, store ReservationStore, notifications NotificationSender, slowStep time.Duration) *BookingService {
+	return &BookingService{rooms: rooms, store: store, notifications: notifications, slowStep: slowStep}
+}
+
+func (service *BookingService) FindFreeRooms(stay DateRange) []Room {
+	free := []Room{}
+	for _, room := range service.rooms {
+		if !service.store.HasOverlap(room, stay) {
+			free = append(free, room)
+		}
+	}
+	return free
+}
+
+func (service *BookingService) Reserve(guest Guest, room Room, stay DateRange) BookingResult {
+	if !stay.IsValid() {
+		return BookingResult{Outcome: "InvalidDates"}
+	}
+	if service.store.HasOverlap(room, stay) {
+		return BookingResult{Outcome: "Unavailable"}
+	}
+
+	time.Sleep(service.slowStep) // zero normally; the race demo makes this step slow
+
+	reservation := NewReservation(fmt.Sprintf("R%d", 101+service.store.Count()), guest, room, stay)
+	service.store.Save(reservation)
+	if err := service.notifications.SendConfirmation(reservation); err != nil {
+		// R6: the booking is already saved, so a failed message must not undo or hide it.
+		return BookingResult{Outcome: "Accepted", ReservationID: reservation.ID, NotificationFailed: true}
+	}
+	return BookingResult{Outcome: "Accepted", ReservationID: reservation.ID}
+}
+
+func (service *BookingService) Cancel(reservationID string) bool {
+	reservation := service.store.Find(reservationID)
+	return reservation != nil && reservation.Cancel()
+}
+
+```
+
+#### JavaScript
+
+```javascript
+test('a failed confirmation keeps the booking', async () => {
+  const { service, store } = newService(true);
+  const result = await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(String(result), 'Accepted R101');
+  assert.equal(result.notificationFailed, true);
+  assert.equal(store.count, 1);
+});
+
+// src/booking.js
+import { Reservation } from './domain.js';
+
+// A pause that lets other requests run while this one waits.
+const wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+export class BookingResult {
+  constructor(outcome, reservationId = null, notificationFailed = false) {
+    this.outcome = outcome;
+    this.reservationId = reservationId;
+    this.notificationFailed = notificationFailed;
+  }
+
+  toString() {
+    return this.reservationId === null ? this.outcome : `${this.outcome} ${this.reservationId}`;
+  }
+}
+
+// Depends only on the two contracts; main.js decides which store and sender to use.
+export class BookingService {
+  constructor(rooms, store, notifications, slowStepMs = 0) {
+    this.rooms = rooms;
+    this.store = store;
+    this.notifications = notifications;
+    this.slowStepMs = slowStepMs;
+  }
+
+  findFreeRooms(stay) {
+    return this.rooms.filter(room => !this.store.hasOverlap(room, stay));
+  }
+
+  async reserve(guest, room, stay) {
+    if (!stay.isValid()) return new BookingResult('InvalidDates');
+    if (this.store.hasOverlap(room, stay)) return new BookingResult('Unavailable');
+
+    await wait(this.slowStepMs); // zero normally; the race demo makes this step slow
+
+    const reservation = new Reservation(`R${101 + this.store.count}`, guest, room, stay);
+    this.store.save(reservation);
+    try {
+      this.notifications.sendConfirmation(reservation);
+    } catch {
+      // R6: the booking is already saved, so a failed message must not undo or hide it.
+      return new BookingResult('Accepted', reservation.id, true);
+    }
+    return new BookingResult('Accepted', reservation.id);
+  }
+
+  cancel(reservationId) {
+    return this.store.find(reservationId)?.cancel() ?? false;
+  }
+}
+
+```
+
+#### Dart
+
+```dart
+  test('a failed confirmation keeps the booking', () async {
+    final fixture = newService(failingSender: true);
+    final result = await fixture.service.reserve(maya, r7, nov(12, 14));
+    expect('$result', 'Accepted R101');
+    expect(result.notificationFailed, isTrue);
+    expect(fixture.store.count, 1);
+  });
+
+// lib/booking.dart
+import 'domain.dart';
+import 'notifications.dart';
+import 'stores.dart';
+
+class BookingResult {
+  BookingResult(this.outcome, [this.reservationId, this.notificationFailed = false]);
+
+  final String outcome;
+  final String? reservationId;
+  final bool notificationFailed;
+
+  @override
+  String toString() => reservationId == null ? outcome : '$outcome $reservationId';
+}
+
+// Depends only on the two interfaces; bin/main.dart decides which store and sender to use.
+class BookingService {
+  BookingService(this.rooms, this.store, this.notifications, {this.slowStep = Duration.zero});
+
+  final List<Room> rooms;
+  final ReservationStore store;
+  final NotificationSender notifications;
+  final Duration slowStep;
+
+  List<Room> findFreeRooms(DateRange stay) =>
+      rooms.where((room) => !store.hasOverlap(room, stay)).toList();
+
+  Future<BookingResult> reserve(Guest guest, Room room, DateRange stay) async {
+    if (!stay.isValid()) return BookingResult('InvalidDates');
+    if (store.hasOverlap(room, stay)) return BookingResult('Unavailable');
+
+    // A pause that lets other requests run while this one waits.
+    await Future<void>.delayed(slowStep);
+
+    final reservation = Reservation('R${101 + store.count}', guest, room, stay);
+    store.save(reservation);
+    try {
+      notifications.sendConfirmation(reservation);
+    } catch (failure) {
+      // R6: the booking is already saved, so a failed message must not undo or hide it.
+      return BookingResult('Accepted', reservation.id, true);
+    }
+    return BookingResult('Accepted', reservation.id);
+  }
+
+  bool cancel(String reservationId) => store.find(reservationId)?.cancel() ?? false;
+}
+
+```
+
 ### 7.3 · SMS confirmations without touching BookingService
 
-Add one new class that keeps the INotificationSender promise, and one test. BookingService does not change at all: that is the O in SOLID. Python: add the class at the end of notifications.py and export it in __init__.py.
+Add one new class that keeps the notification promise, and one test. BookingService does not change at all: that is the O in SOLID. The class goes next to the email sender, in the same file or module.
 
 ### 7.3 · SMS sender and its test
 
@@ -2049,6 +4324,7 @@ public class SmsNotificationSender : INotificationSender
 
     public void SendConfirmation(Reservation reservation) => Sent++;
 }
+
 
     [Fact]
     public void Sms_confirmations_need_no_change_to_BookingService()
@@ -2078,6 +4354,97 @@ class SmsNotificationSender:
         service = BookingService([R7, R8], InMemoryReservationStore(), sms)
         service.reserve(MAYA, R7, nov(12, 14))
         self.assertEqual(1, sms.sent)
+```
+
+#### Java
+
+```java
+package hotelbooking;
+
+// Added in Step 7 without changing BookingService. Simulated, like the email sender.
+public class SmsNotificationSender implements NotificationSender {
+    private int sent;
+
+    public int sent() {
+        return sent;
+    }
+
+    @Override
+    public void sendConfirmation(Reservation reservation) {
+        sent++;
+    }
+}
+
+
+    @Test
+    void sms_confirmations_need_no_change_to_BookingService() {
+        SmsNotificationSender sms = new SmsNotificationSender();
+        BookingService service = new BookingService(List.of(R7, R8), new InMemoryReservationStore(), sms);
+        service.reserve(MAYA, R7, nov(12, 14));
+        assertEquals(1, sms.sent());
+    }
+```
+
+#### Go
+
+```go
+// SmsNotificationSender is added in Step 7 without changing BookingService. Simulated, like the email sender.
+type SmsNotificationSender struct {
+	Sent int
+}
+
+func (sms *SmsNotificationSender) SendConfirmation(reservation *Reservation) error {
+	sms.Sent++
+	return nil
+}
+
+func TestSmsConfirmationsNeedNoChangeToBookingService(t *testing.T) {
+	sms := &SmsNotificationSender{}
+	service := NewBookingService([]Room{r7, r8}, &InMemoryReservationStore{}, sms, 0)
+	service.Reserve(maya, r7, nov(12, 14))
+	if sms.Sent != 1 {
+		t.Errorf("sent %d confirmations, want 1", sms.Sent)
+	}
+}
+```
+
+#### JavaScript
+
+```javascript
+// Added in Step 7 without changing BookingService. Simulated, like the email sender.
+export class SmsNotificationSender {
+  sent = 0;
+
+  sendConfirmation(reservation) {
+    this.sent += 1;
+  }
+}
+
+test('SMS confirmations need no change to BookingService', async () => {
+  const sms = new SmsNotificationSender();
+  const service = new BookingService([r7, r8], new InMemoryReservationStore(), sms);
+  await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(sms.sent, 1);
+});
+```
+
+#### Dart
+
+```dart
+// Added in Step 7 without changing BookingService. Simulated, like the email sender.
+class SmsNotificationSender implements NotificationSender {
+  int sent = 0;
+
+  @override
+  void sendConfirmation(Reservation reservation) => sent++;
+}
+
+  test('SMS confirmations need no change to BookingService', () async {
+    final sms = SmsNotificationSender();
+    final service = BookingService([r7, r8], InMemoryReservationStore(), sms);
+    await service.reserve(maya, r7, nov(12, 14));
+    expect(sms.sent, 1);
+  });
 ```
 
 ### Complete test file after Step 7
@@ -2293,13 +4660,444 @@ if __name__ == "__main__":
 
 ```
 
+#### Java
+
+```java
+package hotelbooking;
+
+// Tests for the booking service after the P04 refactoring.
+// Run them from the hotel-booking folder:  mvn -q test
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+
+// A stand-in sender for tests: remembers what it would send, or fails on purpose.
+class FakeNotificationSender implements NotificationSender {
+    private final boolean fail;
+    final List<String> sent = new ArrayList<>();
+
+    FakeNotificationSender(boolean fail) {
+        this.fail = fail;
+    }
+
+    @Override
+    public void sendConfirmation(Reservation reservation) {
+        if (fail) throw new IllegalStateException("The mail server is down.");
+        sent.add(reservation.id());
+    }
+}
+
+class BookingServiceTests {
+    static final Room R7 = new Room("R7", "Standard");
+    static final Room R8 = new Room("R8", "Deluxe");
+    static final Guest MAYA = new Guest("Maya", "maya@example.com");
+    static final Guest OMAR = new Guest("Omar", "omar@example.com");
+    static final Guest NORA = new Guest("Nora", "nora@example.com");
+
+    static DateRange nov(int checkIn, int checkOut) {
+        return new DateRange(LocalDate.of(2026, 11, checkIn), LocalDate.of(2026, 11, checkOut));
+    }
+
+    // The only place that builds the service: after the refactoring it takes any sender.
+    record Fixture(BookingService service, InMemoryReservationStore store, FakeNotificationSender sender) {}
+
+    static Fixture newService(boolean failingSender) {
+        InMemoryReservationStore store = new InMemoryReservationStore();
+        FakeNotificationSender sender = new FakeNotificationSender(failingSender);
+        return new Fixture(new BookingService(List.of(R7, R8), store, sender), store, sender);
+    }
+
+    @Test
+    void maya_gets_R7_when_it_is_free() {
+        Fixture fixture = newService(false);
+        assertEquals("Accepted R101", fixture.service().reserve(MAYA, R7, nov(12, 14)).toString());
+    }
+
+    @Test
+    void omar_is_refused_when_a_night_is_shared() {
+        Fixture fixture = newService(false);
+        fixture.service().reserve(MAYA, R7, nov(12, 14));
+        assertEquals("Unavailable", fixture.service().reserve(OMAR, R7, nov(13, 15)).toString());
+        assertEquals(1, fixture.store().count());
+    }
+
+    @Test
+    void nora_can_arrive_on_the_day_maya_leaves() {
+        Fixture fixture = newService(false);
+        fixture.service().reserve(MAYA, R7, nov(12, 14));
+        assertEquals("Accepted R102", fixture.service().reserve(NORA, R7, nov(14, 16)).toString());
+    }
+
+    @Test
+    void check_out_must_be_after_check_in() {
+        Fixture fixture = newService(false);
+        assertEquals("InvalidDates", fixture.service().reserve(OMAR, R8, nov(15, 15)).toString());
+        assertEquals(0, fixture.store().count());
+    }
+
+    @Test
+    void cancelling_frees_the_room_again() {
+        Fixture fixture = newService(false);
+        fixture.service().reserve(MAYA, R7, nov(12, 14));
+        assertTrue(fixture.service().cancel("R101"));
+        assertTrue(fixture.service().findFreeRooms(nov(12, 14)).contains(R7));
+    }
+
+    @Test
+    void one_confirmation_per_accepted_booking() {
+        Fixture fixture = newService(false);
+        fixture.service().reserve(MAYA, R7, nov(12, 14));
+        fixture.service().reserve(OMAR, R7, nov(13, 15));
+        fixture.service().reserve(NORA, R7, nov(14, 16));
+        assertEquals(List.of("R101", "R102"), fixture.sender().sent);
+    }
+
+    @Test
+    void a_failed_confirmation_keeps_the_booking() {
+        Fixture fixture = newService(true);
+        BookingResult result = fixture.service().reserve(MAYA, R7, nov(12, 14));
+        assertEquals("Accepted R101", result.toString());
+        assertTrue(result.notificationFailed());
+        assertEquals(1, fixture.store().count());
+    }
+
+    @Test
+    void sms_confirmations_need_no_change_to_BookingService() {
+        SmsNotificationSender sms = new SmsNotificationSender();
+        BookingService service = new BookingService(List.of(R7, R8), new InMemoryReservationStore(), sms);
+        service.reserve(MAYA, R7, nov(12, 14));
+        assertEquals(1, sms.sent());
+    }
+}
+
+```
+
+#### Go
+
+```go
+// Tests for the booking service after the P04 refactoring.
+// Run them from the hotel-booking folder:  go test -v ./...
+package main
+
+import (
+	"errors"
+	"slices"
+	"testing"
+)
+
+// A stand-in sender for tests: remembers what it would send, or fails on purpose.
+type fakeNotificationSender struct {
+	fail bool
+	sent []string
+}
+
+func (fake *fakeNotificationSender) SendConfirmation(reservation *Reservation) error {
+	if fake.fail {
+		return errors.New("the mail server is down")
+	}
+	fake.sent = append(fake.sent, reservation.ID)
+	return nil
+}
+
+// The only place that builds the service: after the refactoring it takes any sender.
+func newService(failingSender bool) (*BookingService, *InMemoryReservationStore, *fakeNotificationSender) {
+	store := &InMemoryReservationStore{}
+	sender := &fakeNotificationSender{fail: failingSender}
+	return NewBookingService([]Room{r7, r8}, store, sender, 0), store, sender
+}
+
+func TestMayaGetsR7WhenItIsFree(t *testing.T) {
+	service, _, _ := newService(false)
+	if got := service.Reserve(maya, r7, nov(12, 14)).String(); got != "Accepted R101" {
+		t.Errorf("got %q, want %q", got, "Accepted R101")
+	}
+}
+
+func TestOmarIsRefusedWhenANightIsShared(t *testing.T) {
+	service, store, _ := newService(false)
+	service.Reserve(maya, r7, nov(12, 14))
+	if got := service.Reserve(omar, r7, nov(13, 15)).String(); got != "Unavailable" {
+		t.Errorf("got %q, want %q", got, "Unavailable")
+	}
+	if store.Count() != 1 {
+		t.Errorf("saved %d reservations, want 1", store.Count())
+	}
+}
+
+func TestNoraCanArriveOnTheDayMayaLeaves(t *testing.T) {
+	service, _, _ := newService(false)
+	service.Reserve(maya, r7, nov(12, 14))
+	if got := service.Reserve(nora, r7, nov(14, 16)).String(); got != "Accepted R102" {
+		t.Errorf("got %q, want %q", got, "Accepted R102")
+	}
+}
+
+func TestCheckOutMustBeAfterCheckIn(t *testing.T) {
+	service, store, _ := newService(false)
+	if got := service.Reserve(omar, r8, nov(15, 15)).String(); got != "InvalidDates" {
+		t.Errorf("got %q, want %q", got, "InvalidDates")
+	}
+	if store.Count() != 0 {
+		t.Errorf("saved %d reservations, want 0", store.Count())
+	}
+}
+
+func TestCancellingFreesTheRoomAgain(t *testing.T) {
+	service, _, _ := newService(false)
+	service.Reserve(maya, r7, nov(12, 14))
+	if !service.Cancel("R101") {
+		t.Error("cancelling R101 should succeed")
+	}
+	if !slices.Contains(service.FindFreeRooms(nov(12, 14)), r7) {
+		t.Error("R7 should be free again")
+	}
+}
+
+func TestOneConfirmationPerAcceptedBooking(t *testing.T) {
+	service, _, sender := newService(false)
+	service.Reserve(maya, r7, nov(12, 14))
+	service.Reserve(omar, r7, nov(13, 15))
+	service.Reserve(nora, r7, nov(14, 16))
+	if !slices.Equal(sender.sent, []string{"R101", "R102"}) {
+		t.Errorf("sent %v, want [R101 R102]", sender.sent)
+	}
+}
+
+func TestAFailedConfirmationKeepsTheBooking(t *testing.T) {
+	service, store, _ := newService(true)
+	result := service.Reserve(maya, r7, nov(12, 14))
+	if result.String() != "Accepted R101" {
+		t.Errorf("got %q, want %q", result.String(), "Accepted R101")
+	}
+	if !result.NotificationFailed {
+		t.Error("the result should report the failed confirmation")
+	}
+	if store.Count() != 1 {
+		t.Errorf("saved %d reservations, want 1", store.Count())
+	}
+}
+
+func TestSmsConfirmationsNeedNoChangeToBookingService(t *testing.T) {
+	sms := &SmsNotificationSender{}
+	service := NewBookingService([]Room{r7, r8}, &InMemoryReservationStore{}, sms, 0)
+	service.Reserve(maya, r7, nov(12, 14))
+	if sms.Sent != 1 {
+		t.Errorf("sent %d confirmations, want 1", sms.Sent)
+	}
+}
+
+```
+
+#### JavaScript
+
+```javascript
+// Tests for the booking service after the P04 refactoring.
+// Run them from the hotel-booking folder:  node --test
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+import { BookingService } from '../src/booking.js';
+import { DateRange, Guest, Room } from '../src/domain.js';
+import { SmsNotificationSender } from '../src/notifications.js';
+import { InMemoryReservationStore } from '../src/stores.js';
+
+const r7 = new Room('R7', 'Standard');
+const r8 = new Room('R8', 'Deluxe');
+const maya = new Guest('Maya', 'maya@example.com');
+const omar = new Guest('Omar', 'omar@example.com');
+const nora = new Guest('Nora', 'nora@example.com');
+
+const nov = (checkIn, checkOut) =>
+  new DateRange(new Date(Date.UTC(2026, 10, checkIn)), new Date(Date.UTC(2026, 10, checkOut)));
+
+// A stand-in sender for tests: remembers what it would send, or fails on purpose.
+class FakeNotificationSender {
+  constructor(fail = false) {
+    this.fail = fail;
+    this.sent = [];
+  }
+
+  sendConfirmation(reservation) {
+    if (this.fail) throw new Error('The mail server is down.');
+    this.sent.push(reservation.id);
+  }
+}
+
+// The only place that builds the service: after the refactoring it takes any sender.
+function newService(failingSender = false) {
+  const store = new InMemoryReservationStore();
+  const sender = new FakeNotificationSender(failingSender);
+  return { service: new BookingService([r7, r8], store, sender), store, sender };
+}
+
+test('Maya gets R7 when it is free', async () => {
+  const { service } = newService();
+  assert.equal(String(await service.reserve(maya, r7, nov(12, 14))), 'Accepted R101');
+});
+
+test('Omar is refused when a night is shared', async () => {
+  const { service, store } = newService();
+  await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(String(await service.reserve(omar, r7, nov(13, 15))), 'Unavailable');
+  assert.equal(store.count, 1);
+});
+
+test('Nora can arrive on the day Maya leaves', async () => {
+  const { service } = newService();
+  await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(String(await service.reserve(nora, r7, nov(14, 16))), 'Accepted R102');
+});
+
+test('check-out must be after check-in', async () => {
+  const { service, store } = newService();
+  assert.equal(String(await service.reserve(omar, r8, nov(15, 15))), 'InvalidDates');
+  assert.equal(store.count, 0);
+});
+
+test('cancelling frees the room again', async () => {
+  const { service } = newService();
+  await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(service.cancel('R101'), true);
+  assert.ok(service.findFreeRooms(nov(12, 14)).some(room => room.equals(r7)));
+});
+
+test('one confirmation per accepted booking', async () => {
+  const { service, sender } = newService();
+  await service.reserve(maya, r7, nov(12, 14));
+  await service.reserve(omar, r7, nov(13, 15));
+  await service.reserve(nora, r7, nov(14, 16));
+  assert.deepEqual(sender.sent, ['R101', 'R102']);
+});
+
+test('a failed confirmation keeps the booking', async () => {
+  const { service, store } = newService(true);
+  const result = await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(String(result), 'Accepted R101');
+  assert.equal(result.notificationFailed, true);
+  assert.equal(store.count, 1);
+});
+
+test('SMS confirmations need no change to BookingService', async () => {
+  const sms = new SmsNotificationSender();
+  const service = new BookingService([r7, r8], new InMemoryReservationStore(), sms);
+  await service.reserve(maya, r7, nov(12, 14));
+  assert.equal(sms.sent, 1);
+});
+
+```
+
+#### Dart
+
+```dart
+// Tests for the booking service after the P04 refactoring.
+// Run them from the hotel-booking folder:  dart test
+import 'package:hotel_booking/hotel_booking.dart';
+import 'package:test/test.dart';
+
+final r7 = Room('R7', 'Standard');
+final r8 = Room('R8', 'Deluxe');
+final maya = Guest('Maya', 'maya@example.com');
+final omar = Guest('Omar', 'omar@example.com');
+final nora = Guest('Nora', 'nora@example.com');
+
+DateRange nov(int checkIn, int checkOut) =>
+    DateRange(DateTime.utc(2026, 11, checkIn), DateTime.utc(2026, 11, checkOut));
+
+// A stand-in sender for tests: remembers what it would send, or fails on purpose.
+class FakeNotificationSender implements NotificationSender {
+  FakeNotificationSender({this.fail = false});
+
+  final bool fail;
+  final List<String> sent = [];
+
+  @override
+  void sendConfirmation(Reservation reservation) {
+    if (fail) throw StateError('The mail server is down.');
+    sent.add(reservation.id);
+  }
+}
+
+// The only place that builds the service: after the refactoring it takes any sender.
+({BookingService service, InMemoryReservationStore store, FakeNotificationSender sender})
+    newService({bool failingSender = false}) {
+  final store = InMemoryReservationStore();
+  final sender = FakeNotificationSender(fail: failingSender);
+  return (
+    service: BookingService([r7, r8], store, sender),
+    store: store,
+    sender: sender,
+  );
+}
+
+void main() {
+  test('Maya gets R7 when it is free', () async {
+    final fixture = newService();
+    expect('${await fixture.service.reserve(maya, r7, nov(12, 14))}', 'Accepted R101');
+  });
+
+  test('Omar is refused when a night is shared', () async {
+    final fixture = newService();
+    await fixture.service.reserve(maya, r7, nov(12, 14));
+    expect('${await fixture.service.reserve(omar, r7, nov(13, 15))}', 'Unavailable');
+    expect(fixture.store.count, 1);
+  });
+
+  test('Nora can arrive on the day Maya leaves', () async {
+    final fixture = newService();
+    await fixture.service.reserve(maya, r7, nov(12, 14));
+    expect('${await fixture.service.reserve(nora, r7, nov(14, 16))}', 'Accepted R102');
+  });
+
+  test('check-out must be after check-in', () async {
+    final fixture = newService();
+    expect('${await fixture.service.reserve(omar, r8, nov(15, 15))}', 'InvalidDates');
+    expect(fixture.store.count, 0);
+  });
+
+  test('cancelling frees the room again', () async {
+    final fixture = newService();
+    await fixture.service.reserve(maya, r7, nov(12, 14));
+    expect(fixture.service.cancel('R101'), isTrue);
+    expect(fixture.service.findFreeRooms(nov(12, 14)), contains(r7));
+  });
+
+  test('one confirmation per accepted booking', () async {
+    final fixture = newService();
+    await fixture.service.reserve(maya, r7, nov(12, 14));
+    await fixture.service.reserve(omar, r7, nov(13, 15));
+    await fixture.service.reserve(nora, r7, nov(14, 16));
+    expect(fixture.sender.sent, ['R101', 'R102']);
+  });
+
+  test('a failed confirmation keeps the booking', () async {
+    final fixture = newService(failingSender: true);
+    final result = await fixture.service.reserve(maya, r7, nov(12, 14));
+    expect('$result', 'Accepted R101');
+    expect(result.notificationFailed, isTrue);
+    expect(fixture.store.count, 1);
+  });
+
+  test('SMS confirmations need no change to BookingService', () async {
+    final sms = SmsNotificationSender();
+    final service = BookingService([r7, r8], InMemoryReservationStore(), sms);
+    await service.reserve(maya, r7, nov(12, 14));
+    expect(sms.sent, 1);
+  });
+}
+
+```
+
 ### Your turn · add the fake, rule R6 and SMS
 
 1. Add FakeNotificationSender to the test file and change the helper as in 7.1. Change the sixth test to check the ids: R101 and R102 (see the complete test file). Run the tests: 6 green.
 2. In docs/requirements.md, add ## R6 · Failed message: “If the confirmation cannot be sent, the booking stays saved and Accepted, and the failure is reported.”
 3. Add the R6 test from 7.2 and run the tests. It fails (red): that is expected, because Reserve does not handle the error yet.
 4. Change BookingResult and Reserve as in 7.2. Run the tests: 7 green.
-5. Add SmsNotificationSender and its test from 7.3 (Python: also add it to the import line in __init__.py and in the test file). Run the tests: 8 green.
+5. Add SmsNotificationSender and its test from 7.3, and import it where your test file needs it. Run the tests: 8 green.
 6. Check that you did not edit BookingService for the SMS step.
 
 **When you finish, you have:** a fake sender in the tests, rule R6 in requirements.md and in the code, an SMS sender, and 8 green tests.
@@ -2323,17 +5121,125 @@ Check your folder against the list, then see what the next practices do with thi
 
 ### hotel-booking folder
 
+#### C#
+
 ```text
 hotel-booking/
 ├── docs/
 │   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
 │   ├── design-notes.md       P03 answers, plus today's P04 sections
 │   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
-├── HotelBooking/             C#: one file per class; Program.cs wires them together
-├── HotelBooking.Tests/       C#: BookingServiceTests.cs with 8 tests
-├── hotel_booking/            Python: domain.py, stores.py, notifications.py, booking.py
-├── main.py                   Python: wires everything together and runs the demo
-└── test_booking_service.py   Python: 8 tests
+├── HotelBooking.Tests/BookingServiceTests.cs   8 tests
+├── HotelBooking.Tests/HotelBooking.Tests.csproj
+├── HotelBooking/BookingResult.cs
+├── HotelBooking/BookingService.cs
+├── HotelBooking/DateRange.cs
+├── HotelBooking/EmailNotificationSender.cs
+├── HotelBooking/Guest.cs
+├── HotelBooking/HotelBooking.csproj
+├── HotelBooking/InMemoryReservationStore.cs
+├── HotelBooking/INotificationSender.cs
+├── HotelBooking/IReservationStore.cs
+├── HotelBooking/Program.cs
+├── HotelBooking/Reservation.cs
+├── HotelBooking/ReservationStatus.cs
+├── HotelBooking/Room.cs
+└── HotelBooking/SmsNotificationSender.cs
+```
+
+#### Python
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── hotel_booking/__init__.py
+├── hotel_booking/booking.py
+├── hotel_booking/domain.py
+├── hotel_booking/notifications.py
+├── hotel_booking/stores.py
+├── main.py
+└── test_booking_service.py   8 tests
+```
+
+#### Java
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── pom.xml
+├── src/main/java/hotelbooking/BookingResult.java
+├── src/main/java/hotelbooking/BookingService.java
+├── src/main/java/hotelbooking/DateRange.java
+├── src/main/java/hotelbooking/EmailNotificationSender.java
+├── src/main/java/hotelbooking/Guest.java
+├── src/main/java/hotelbooking/InMemoryReservationStore.java
+├── src/main/java/hotelbooking/Main.java
+├── src/main/java/hotelbooking/NotificationSender.java
+├── src/main/java/hotelbooking/Reservation.java
+├── src/main/java/hotelbooking/ReservationStatus.java
+├── src/main/java/hotelbooking/ReservationStore.java
+├── src/main/java/hotelbooking/Room.java
+├── src/main/java/hotelbooking/SmsNotificationSender.java
+└── src/test/java/hotelbooking/BookingServiceTests.java   8 tests
+```
+
+#### Go
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── booking_service_test.go   8 tests
+├── booking.go
+├── domain.go
+├── go.mod
+├── main.go
+├── notifications.go
+└── stores.go
+```
+
+#### JavaScript
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── main.js
+├── package.json
+├── src/booking.js
+├── src/domain.js
+├── src/notifications.js
+├── src/stores.js
+└── test/booking.test.js   8 tests
+```
+
+#### Dart
+
+```text
+hotel-booking/
+├── docs/
+│   ├── requirements.md       R1–R5 from P03, plus R6 (new today)
+│   ├── design-notes.md       P03 answers, plus today's P04 sections
+│   └── diagrams.drawio       P03 pages, plus the new page "Classes - after"
+├── analysis_options.yaml
+├── bin/main.dart
+├── lib/booking.dart
+├── lib/domain.dart
+├── lib/hotel_booking.dart
+├── lib/notifications.dart
+├── lib/stores.dart
+├── pubspec.yaml
+└── test/booking_service_test.dart   8 tests
 ```
 
 ### Your P04 checklist
@@ -2341,7 +5247,7 @@ hotel-booking/
 | File or page | It is finished when |
 | --- | --- |
 | Tests | 8 tests pass: the 6 from Step 2 plus R6 and SMS. |
-| App code | BookingService’s constructor takes IReservationStore and INotificationSender; every class is in its own file (C#) or module (Python). |
+| App code | BookingService’s constructor takes the storage promise and the notification promise; the classes live in separate files or modules instead of one big file. |
 | Demo and race | The same nine demo lines as P03; the race still double-books. |
 | docs/requirements.md | R6 is added. |
 | docs/design-notes.md | P04 sections: Refactoring, What our code breaks, Proof. |
