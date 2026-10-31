@@ -34,6 +34,11 @@ Job: knows which rooms the hotel sells.
 | Nightly price | The amount charged for one night in a room, based on its type. |
 | Out of service | A room is unavailable for sale, for example while R8 is being repaired. |
 
+Rules this context owns:
+
+- A room that is out of service is not offered to guests.
+- The nightly price depends on the room type (Deluxe costs more than Standard).
+
 ## Reservations
 
 Job: decides whether a guest gets a room for some nights, and keeps every reservation.
@@ -49,6 +54,12 @@ Job: decides whether a guest gets a room for some nights, and keeps every reserv
 | Cancel | Withdraw a reservation by its id, such as R101, while keeping its history. |
 | Free rooms | The rooms with no Confirmed reservation sharing a night with the requested stay. |
 
+Rules this context owns:
+
+- A room never has two Confirmed reservations that share a night.
+- Check-out must be after check-in.
+- Cancelling a reservation frees its nights for new bookings.
+
 ## Payments
 
 Job: takes deposits and records whether they were paid.
@@ -58,6 +69,11 @@ Job: takes deposits and records whether they were paid.
 | Deposit | A payment of 30% of the stay’s price, taken when the guest books. |
 | Paid | The deposit was successfully collected. |
 | Declined | The payment provider refused the deposit payment. |
+
+Rules this context owns:
+
+- The deposit is 30% of the stay’s price.
+- Only a Paid deposit can be refunded.
 
 ## Notifications
 
@@ -69,6 +85,10 @@ Job: tells guests what happened, by email or SMS.
 | Sent | The confirmation message was sent successfully; this is a message status. |
 | Failed | The confirmation message could not be sent; this is a message status that never changes the reservation. |
 
+Rules this context owns:
+
+- A failed message is recorded as Failed and never changes the reservation.
+
 ## Same word, different meaning
 
 | Word | Rooms | Reservations | Payments | Notifications |
@@ -78,3 +98,16 @@ Job: tells guests what happened, by email or SMS.
 | Cancel | Remove a room from sale. | Withdraw the guest’s reservation and free its nights. | Refund a deposit. | Not used. |
 
 If Notifications changed Maya’s reservation status from Confirmed to Failed when an SMS failed, Maya could lose R7 because the reservation would stop blocking its nights, violating R6.
+
+## Rule owners
+
+| Card | Rule | Owner | Why this owner |
+| --- | --- | --- | --- |
+| 1 | A room never has two Confirmed reservations that share a night. | Reservations | It keeps every reservation of the room, so it can check them all together. |
+| 2 | Check-out must be after check-in. | Reservations | It owns the stay dates and validates them before accepting a reservation. |
+| 3 | Cancelling a reservation frees its nights for new bookings. | Reservations | It keeps reservation statuses and decides which reservations still block the room. |
+| 4 | A room that is out of service is not offered to guests. | Rooms | It keeps each room’s service availability and knows which rooms are on sale. |
+| 5 | The nightly price depends on the room type (Deluxe costs more than Standard). | Rooms | It keeps each room’s type and nightly price. |
+| 6 | The deposit is 30% of the stay’s price. | Payments | Money rules belong to Payments; it asks Rooms for the nightly price. |
+| 7 | Only a Paid deposit can be refunded. | Payments | It keeps each deposit’s payment status and decides whether a refund is allowed. |
+| 8 | A failed message is recorded as Failed and never changes the reservation. | Notifications | It owns delivery outcomes and message status, while reservation status belongs to Reservations (R6). |
