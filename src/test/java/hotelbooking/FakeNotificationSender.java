@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 // A test sender that records reservation ids or fails on purpose.
-class FakeNotificationSender implements NotificationSender {
+public class FakeNotificationSender implements NotificationSender {
     private final boolean fail;
-    final List<String> sent = new ArrayList<>();
+    private final List<String> sent = new ArrayList<>();
 
-    FakeNotificationSender(boolean fail) {
+    public FakeNotificationSender(boolean fail) {
         this.fail = fail;
+    }
+
+    public List<String> sent() {
+        return List.copyOf(sent);
     }
 
     @Override

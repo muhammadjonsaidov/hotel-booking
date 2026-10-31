@@ -13,6 +13,8 @@ public class Main {
     private static final Guest OMAR = new Guest("Omar", "omar@example.com");
     private static final Guest NORA = new Guest("Nora", "nora@example.com");
 
+    private Main() {}
+
     public static void main(String[] args) throws InterruptedException {
         if (List.of(args).contains("--race")) runRace(); else runDemo();
     }
@@ -66,7 +68,7 @@ public class Main {
         return rooms.stream().map(Room::number).collect(Collectors.joining(", "));
     }
 
-    static String boolText(boolean value) {
+    private static String boolText(boolean value) {
         return value ? "True" : "False";
     }
 }
