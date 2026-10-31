@@ -1,4 +1,4 @@
-<mxfile host="drawio-plugin" modified="2026-10-24T13:46:34.725Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" etag="rXqxIRVF4jLc3XY30LYu" version="22.1.22" type="embed" pages="6">
+<mxfile host="drawio-plugin" modified="2026-10-24T13:46:34.725Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" etag="rXqxIRVF4jLc3XY30LYu" version="22.1.22" type="embed" pages="7">
   <diagram id="booking-classes" name="Classes">
     <mxGraphModel dx="678" dy="583" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#f5fafc" math="0" shadow="0">
       <root>
@@ -481,6 +481,43 @@
             <mxPoint x="1430" y="780" />
           </Array>
         </mxGeometry>
+      </mxCell>
+    </root>
+  </mxGraphModel>
+</diagram>
+<diagram id="hotel-context-map" name="Context map">
+  <mxGraphModel grid="1" gridSize="10" guides="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" background="#f5fafc">
+    <root>
+      <mxCell id="0" />
+      <mxCell id="1" parent="0" />
+      <mxCell id="title" value="Hotel business context map" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;text;align=left;fontStyle=1;fontSize=26;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="50" y="30" width="1250" height="50" />
+      </mxCell>
+      <mxCell id="rooms" value="&lt;b&gt;Rooms (Inventory)&lt;/b&gt;&lt;br&gt;&lt;br&gt;Keeps room numbers, types and nightly prices.&lt;br&gt;Status: in service / out of service.&lt;br&gt;Owns the room catalog, prices and sale availability." style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;rounded=0;strokeWidth=2;align=left;verticalAlign=top;spacing=22;fillColor=#ffffff;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="80" y="150" width="480" height="220" />
+      </mxCell>
+      <mxCell id="payments" value="&lt;b&gt;Payments&lt;/b&gt;&lt;br&gt;&lt;br&gt;Keeps deposits and their amounts.&lt;br&gt;Status: Paid / Declined.&lt;br&gt;Owns deposit calculation and refund rules." style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;rounded=0;strokeWidth=2;align=left;verticalAlign=top;spacing=22;fillColor=#ffffff;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="840" y="150" width="480" height="220" />
+      </mxCell>
+      <mxCell id="reservations" value="&lt;b&gt;Reservations&lt;/b&gt;&lt;br&gt;&lt;br&gt;Keeps guests, stays and reservation ids.&lt;br&gt;Status: Confirmed / Cancelled.&lt;br&gt;Owns the rule: no two Confirmed reservations of one room share a night." style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;rounded=0;strokeWidth=2;align=left;verticalAlign=top;spacing=22;fillColor=#d5e8d4;strokeColor=#3d7542;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="80" y="620" width="480" height="240" />
+      </mxCell>
+      <mxCell id="notifications" value="&lt;b&gt;Notifications&lt;/b&gt;&lt;br&gt;&lt;br&gt;Keeps confirmation messages and channels.&lt;br&gt;Status: Sent / Failed.&lt;br&gt;Owns email/SMS delivery; failure never changes a reservation." style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;rounded=0;strokeWidth=2;align=left;verticalAlign=top;spacing=22;fillColor=#ffffff;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="840" y="620" width="480" height="240" />
+      </mxCell>
+      <mxCell id="asks-rooms" value="Asks: which rooms exist?" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;endFill=1;strokeWidth=2;labelBackgroundColor=#f5fafc;dashed=0;exitX=0.25;exitY=0;entryX=0.25;entryY=1;" edge="1" parent="1" source="reservations" target="rooms">
+        <mxGeometry as="geometry" relative="1" />
+      </mxCell>
+      <mxCell id="asks-payments" value="Asks: take a deposit (planned)" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;endFill=1;strokeWidth=2;labelBackgroundColor=#f5fafc;dashed=0;exitX=0.8;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="reservations" target="payments">
+        <mxGeometry as="geometry" relative="1">
+          <Array as="points">
+            <mxPoint x="464" y="480" />
+            <mxPoint x="1080" y="480" />
+          </Array>
+        </mxGeometry>
+      </mxCell>
+      <mxCell id="announces-confirmed" value="Announces:&lt;br&gt;ReservationConfirmed" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;endFill=1;strokeWidth=2;labelBackgroundColor=#f5fafc;dashed=1;dashPattern=1 4;strokeColor=#3d7542;fontColor=#3d7542;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="reservations" target="notifications">
+        <mxGeometry as="geometry" relative="1" />
       </mxCell>
     </root>
   </mxGraphModel>
