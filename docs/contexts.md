@@ -39,6 +39,10 @@ Rules this context owns:
 - A room that is out of service is not offered to guests.
 - The nightly price depends on the room type (Deluxe costs more than Standard).
 
+Needs from other contexts: nothing.
+
+Tells other contexts: the room list, with each room’s number and type, as the answer to Reservations.
+
 ## Reservations
 
 Job: decides whether a guest gets a room for some nights, and keeps every reservation.
@@ -60,6 +64,10 @@ Rules this context owns:
 - Check-out must be after check-in.
 - Cancelling a reservation frees its nights for new bookings.
 
+Needs from other contexts: the room list from Rooms; Paid or Declined from Payments when deposit processing is introduced.
+
+Tells other contexts: ReservationConfirmed to Notifications after saving; a deposit request to Payments when deposit processing is introduced.
+
 ## Payments
 
 Job: takes deposits and records whether they were paid.
@@ -75,6 +83,10 @@ Rules this context owns:
 - The deposit is 30% of the stay’s price.
 - Only a Paid deposit can be refunded.
 
+Needs from other contexts: the reservation id and deposit amount from Reservations when deposit processing is introduced.
+
+Tells other contexts: Paid or Declined as the answer to Reservations; it never decides room availability.
+
 ## Notifications
 
 Job: tells guests what happened, by email or SMS.
@@ -88,6 +100,10 @@ Job: tells guests what happened, by email or SMS.
 Rules this context owns:
 
 - A failed message is recorded as Failed and never changes the reservation.
+
+Needs from other contexts: ReservationConfirmed with the reservation id, guest email, room number, check-in and check-out from Reservations.
+
+Tells other contexts: nothing to other contexts; it owns message delivery and records its outcome without changing a reservation.
 
 ## Same word, different meaning
 
@@ -111,3 +127,47 @@ If Notifications changed Maya’s reservation status from Confirmed to Failed wh
 | 6 | The deposit is 30% of the stay’s price. | Payments | Money rules belong to Payments; it asks Rooms for the nightly price. |
 | 7 | Only a Paid deposit can be refunded. | Payments | It keeps each deposit’s payment status and decides whether a refund is allowed. |
 | 8 | A failed message is recorded as Failed and never changes the reservation. | Notifications | It owns delivery outcomes and message status, while reservation status belongs to Reservations (R6). |
+
+## Between contexts
+
+These contracts describe the intended context boundaries: payment processing and event delivery are planned, while the current notification interface still makes a synchronous call with a Reservation object.
+
+### Reservations → Notifications: ReservationConfirmed (event)
+
+Sent when: a reservation is saved as Confirmed.
+
+Fields:
+
+- reservationId: R101
+- guestEmail: maya@example.com
+- roomNumber: R7
+- checkIn: 2026-11-12
+- checkOut: 2026-11-14
+
+Reservations does not wait for an answer; Notifications chooses email or SMS and records delivery success or failure.
+A failed message never changes R101 (R6).
+
+Never crosses: Reservations’ list of reservations, its internal Reservation object or its booking rules; Notifications receives only the five fields above and never reads or changes reservation storage.
+
+### Reservations → Rooms: which rooms exist? (question)
+
+Sent when: Reservations needs the room catalog to search free rooms or book a room.
+
+What Reservations sends: a request for the room list, with no guest, stay or reservation fields.
+
+The answer and its fields: a list of rooms, each with number and type, such as number R7 with type Standard and number R8 with type Deluxe; Reservations waits for the answer and checks booked nights itself.
+
+Never crosses: Rooms’ private storage or implementation; Reservations’ guest data, stays and list of reservations remain in Reservations.
+
+### Reservations → Payments: take a deposit (question, planned)
+
+Sent when: a booking reaches the deposit stage after payment processing is introduced.
+
+What Reservations sends:
+
+- reservationId: R101
+- amount: 72.00, representing a 30% deposit for a stay priced at 240.00
+
+The answer and its fields: the deposit status, Paid or Declined; Reservations waits for that answer and decides what it means for the booking.
+
+Never crosses: payment credentials, provider internals or Payments’ private deposit records; Reservations’ list of reservations and booking rules also stay private, and Payments never changes reservation status or decides room availability.
