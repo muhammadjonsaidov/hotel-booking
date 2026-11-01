@@ -90,3 +90,7 @@ Race: still double-books R7 for 12–14 November; Maya receives Accepted R101, O
 - Reservations uses only the public contracts of other modules; it must not depend on their internal implementations.
 - Rooms does not depend on Reservations, Payments or Notifications.
 - Payments and Notifications do not depend on Reservations, keeping dependencies in one direction.
+
+## Broken on purpose
+
+The reservationsUsesOnlyPublicContracts rule failed when BookingService directly referenced EmailNotificationSender; the message named hotelbooking.reservations.BookingService, its shortcut field and constructor call, and hotelbooking.notifications.internal.EmailNotificationSender, while all 8 behavior tests still passed; removing the reference restored all 11 passing checks.
