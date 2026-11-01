@@ -1,4 +1,4 @@
-<mxfile host="drawio-plugin" modified="2026-10-24T13:46:34.725Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" etag="rXqxIRVF4jLc3XY30LYu" version="22.1.22" type="embed" pages="7">
+<mxfile host="drawio-plugin" modified="2026-10-24T13:46:34.725Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" etag="rXqxIRVF4jLc3XY30LYu" version="22.1.22" type="embed" pages="8">
   <diagram id="booking-classes" name="Classes">
     <mxGraphModel dx="678" dy="583" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#f5fafc" math="0" shadow="0">
       <root>
@@ -518,6 +518,62 @@
       </mxCell>
       <mxCell id="announces-confirmed" value="Announces:&lt;br&gt;ReservationConfirmed" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;endFill=1;strokeWidth=2;labelBackgroundColor=#f5fafc;dashed=1;dashPattern=1 4;strokeColor=#3d7542;fontColor=#3d7542;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="reservations" target="notifications">
         <mxGeometry as="geometry" relative="1" />
+      </mxCell>
+    </root>
+  </mxGraphModel>
+</diagram>
+<diagram id="hotel-module-dependencies" name="Modules">
+  <mxGraphModel grid="1" gridSize="10" guides="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1750" pageHeight="1200" background="#f5fafc">
+    <root>
+      <mxCell id="0" />
+      <mxCell id="1" parent="0" />
+      <mxCell id="title" value="Module dependencies" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;text;align=left;fontStyle=1;fontSize=26;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="50" y="30" width="1300" height="50" />
+      </mxCell>
+      <mxCell id="reservations" value="&lt;b&gt;Reservations&lt;/b&gt;&lt;br&gt;&lt;br&gt;BookingService&lt;br&gt;Owns stays, reservations and the booking rule." style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;rounded=0;strokeWidth=2;align=left;verticalAlign=top;spacing=22;fillColor=#d5e8d4;strokeColor=#3d7542;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="600" y="140" width="400" height="200" />
+      </mxCell>
+      <mxCell id="rooms-contract" value="&lt;b&gt;Rooms contract&lt;/b&gt;&lt;br&gt;&lt;br&gt;Room&lt;br&gt;RoomCatalog" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;rounded=0;strokeWidth=2;align=left;verticalAlign=top;spacing=22;fillColor=#ffffff;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="50" y="520" width="400" height="180" />
+      </mxCell>
+      <mxCell id="payments-contract" value="&lt;b&gt;Payments contract&lt;/b&gt;&lt;br&gt;&lt;br&gt;PaymentService, PaymentStatus&lt;br&gt;Booking integration is planned." style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;rounded=0;strokeWidth=2;align=left;verticalAlign=top;spacing=22;fillColor=#ffffff;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="600" y="520" width="400" height="180" />
+      </mxCell>
+      <mxCell id="notifications-contract" value="&lt;b&gt;Notifications contract&lt;/b&gt;&lt;br&gt;&lt;br&gt;Confirmation&lt;br&gt;NotificationSender" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;rounded=0;strokeWidth=2;align=left;verticalAlign=top;spacing=22;fillColor=#ffffff;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="1130" y="520" width="400" height="180" />
+      </mxCell>
+      <mxCell id="internal-email" value="&lt;b&gt;Notifications internal&lt;/b&gt;&lt;br&gt;&lt;br&gt;EmailNotificationSender&lt;br&gt;Chosen by Main; hidden behind NotificationSender." style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;rounded=0;strokeWidth=2;align=left;verticalAlign=top;spacing=22;fillColor=#e1d5e7;strokeColor=#9673a6;dashed=1;dashPattern=5 3;" vertex="1" parent="1">
+        <mxGeometry as="geometry" x="1130" y="870" width="400" height="200" />
+      </mxCell>
+      <mxCell id="uses-rooms" value="Uses" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;dashPattern=5 3;endArrow=open;endFill=0;strokeWidth=2;labelBackgroundColor=#f5fafc;exitX=0.2;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="reservations" target="rooms-contract">
+        <mxGeometry as="geometry" relative="1">
+          <Array as="points">
+            <mxPoint x="680" y="430" />
+            <mxPoint x="250" y="430" />
+          </Array>
+        </mxGeometry>
+      </mxCell>
+      <mxCell id="uses-payments" value="Uses" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;dashPattern=5 3;endArrow=open;endFill=0;strokeWidth=2;labelBackgroundColor=#f5fafc;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="reservations" target="payments-contract">
+        <mxGeometry as="geometry" relative="1" />
+      </mxCell>
+      <mxCell id="uses-notifications" value="Uses" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;dashPattern=5 3;endArrow=open;endFill=0;strokeWidth=2;labelBackgroundColor=#f5fafc;exitX=0.85;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="reservations" target="notifications-contract">
+        <mxGeometry as="geometry" relative="1">
+          <Array as="points">
+            <mxPoint x="940" y="430" />
+            <mxPoint x="1330" y="430" />
+          </Array>
+        </mxGeometry>
+      </mxCell>
+      <mxCell id="implements-notifications" value="Implements" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;dashPattern=5 3;endArrow=open;endFill=0;strokeWidth=2;labelBackgroundColor=#f5fafc;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="internal-email" target="notifications-contract">
+        <mxGeometry as="geometry" relative="1" />
+      </mxCell>
+      <mxCell id="forbidden-email" value="Forbidden" style="html=1;whiteSpace=wrap;fontColor=#173650;fontSize=18;strokeColor=#173650;edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;dashPattern=5 3;endArrow=open;endFill=0;strokeWidth=2;labelBackgroundColor=#f5fafc;strokeColor=#c62828;fontColor=#c62828;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="reservations" target="internal-email">
+        <mxGeometry as="geometry" relative="1">
+          <Array as="points">
+            <mxPoint x="1630" y="240" />
+            <mxPoint x="1630" y="970" />
+          </Array>
+        </mxGeometry>
       </mxCell>
     </root>
   </mxGraphModel>
