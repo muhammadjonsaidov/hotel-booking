@@ -1,4 +1,8 @@
-package hotelbooking;
+package hotelbooking.reservations.internal;
+
+import hotelbooking.reservations.Reservation;
+import hotelbooking.reservations.DateRange;
+import hotelbooking.reservations.ReservationStore;
 
 import hotelbooking.rooms.Room;
 

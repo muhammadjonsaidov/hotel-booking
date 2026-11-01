@@ -1,4 +1,4 @@
-package hotelbooking;
+package hotelbooking.reservations;
 
 public record BookingResult(String outcome, String reservationId, boolean notificationFailed) {
     public BookingResult(String outcome) {

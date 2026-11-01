@@ -1,5 +1,10 @@
 package hotelbooking;
 
+import hotelbooking.reservations.BookingService;
+import hotelbooking.reservations.DateRange;
+import hotelbooking.reservations.Guest;
+import hotelbooking.reservations.internal.InMemoryReservationStore;
+
 import hotelbooking.rooms.Room;
 
 import java.time.LocalDate;

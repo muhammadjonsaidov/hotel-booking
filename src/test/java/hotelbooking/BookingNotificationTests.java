@@ -1,5 +1,9 @@
 package hotelbooking;
 
+import hotelbooking.reservations.BookingService;
+import hotelbooking.reservations.BookingResult;
+import hotelbooking.reservations.internal.InMemoryReservationStore;
+
 import hotelbooking.notifications.internal.SmsNotificationSender;
 
 import static hotelbooking.BookingServiceTestSupport.*;

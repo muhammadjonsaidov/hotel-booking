@@ -1,6 +1,11 @@
 package hotelbooking;
 
-import hotelbooking.notifications.Confirmation;
+import hotelbooking.reservations.BookingService;
+import hotelbooking.reservations.BookingResult;
+import hotelbooking.reservations.DateRange;
+import hotelbooking.reservations.Guest;
+import hotelbooking.reservations.internal.InMemoryReservationStore;
+
 import hotelbooking.notifications.internal.EmailNotificationSender;
 
 import hotelbooking.rooms.Room;
