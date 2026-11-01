@@ -75,3 +75,12 @@ Race: still double-booked R7 for 12–14 November, with Maya accepted as R101 an
 Tests: all 8 tests passed, with 0 failures, errors or skipped tests.
 Demo: all nine lines match the expected output exactly, including Accepted R101 for Maya, Unavailable for Omar’s overlapping stay, Accepted R102 for Nora and 2 confirmation emails.
 Race: still double-books R7 for 12–14 November; Maya receives Accepted R101, Omar receives Accepted R102, and the store contains 2 Confirmed reservations.
+
+## Modules
+
+| Module | Public contract (other modules may use) | Internal code (only the module, wiring and tests may use) |
+| --- | --- | --- |
+| Rooms | Room, RoomCatalog | InMemoryRoomCatalog |
+| Reservations | BookingService, BookingResult, Reservation, DateRange, Guest, ReservationStatus, ReservationStore | InMemoryReservationStore |
+| Payments | PaymentStatus, PaymentService | SimulatedPaymentService |
+| Notifications | Confirmation, NotificationSender | EmailNotificationSender, SmsNotificationSender |
