@@ -69,3 +69,9 @@ Demo: the same nine output lines as before the refactoring, matched line by line
 Race: still double-booked R7 for 12–14 November, with Maya accepted as R101 and Omar as R102; 2 Confirmed reservations, matching the previous output.
 
 # Module design notes
+
+## Before
+
+Tests: all 8 tests passed, with 0 failures, errors or skipped tests.
+Demo: all nine lines match the expected output exactly, including Accepted R101 for Maya, Unavailable for Omar’s overlapping stay, Accepted R102 for Nora and 2 confirmation emails.
+Race: still double-books R7 for 12–14 November; Maya receives Accepted R101, Omar receives Accepted R102, and the store contains 2 Confirmed reservations.
