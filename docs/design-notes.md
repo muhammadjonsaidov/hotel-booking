@@ -67,3 +67,5 @@ Before refactoring:
 Tests: the initial 6 characterization tests passed throughout refactoring; the final suite now passes all 8 tests (5 booking tests and 3 notification tests), with 0 failures, errors or skipped tests.
 Demo: the same nine output lines as before the refactoring, matched line by line.
 Race: still double-booked R7 for 12–14 November, with Maya accepted as R101 and Omar as R102; 2 Confirmed reservations, matching the previous output.
+
+# Module design notes
