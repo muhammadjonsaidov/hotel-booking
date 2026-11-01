@@ -1,5 +1,8 @@
 package hotelbooking;
 
+import hotelbooking.notifications.NotificationSender;
+import hotelbooking.notifications.Confirmation;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +20,8 @@ public class FakeNotificationSender implements NotificationSender {
     }
 
     @Override
-    public void sendConfirmation(Reservation reservation) {
+    public void sendConfirmation(Confirmation confirmation) {
         if (fail) throw new IllegalStateException("The mail server is down.");
-        sent.add(reservation.id());
+        sent.add(confirmation.reservationId());
     }
 }

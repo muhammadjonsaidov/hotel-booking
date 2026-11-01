@@ -1,5 +1,7 @@
 package hotelbooking;
 
+import hotelbooking.rooms.Room;
+
 import java.time.LocalDate;
 import java.util.List;
 

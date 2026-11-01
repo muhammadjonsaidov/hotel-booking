@@ -1,5 +1,10 @@
 package hotelbooking;
 
+import hotelbooking.notifications.Confirmation;
+import hotelbooking.notifications.internal.EmailNotificationSender;
+
+import hotelbooking.rooms.Room;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;

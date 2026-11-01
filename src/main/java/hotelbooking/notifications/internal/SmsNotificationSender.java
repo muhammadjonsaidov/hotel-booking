@@ -1,4 +1,7 @@
-package hotelbooking;
+package hotelbooking.notifications.internal;
+
+import hotelbooking.notifications.Confirmation;
+import hotelbooking.notifications.NotificationSender;
 
 // Simulated: counts confirmations without sending real messages.
 public class SmsNotificationSender implements NotificationSender {
@@ -9,7 +12,7 @@ public class SmsNotificationSender implements NotificationSender {
     }
 
     @Override
-    public void sendConfirmation(Reservation reservation) {
+    public void sendConfirmation(Confirmation confirmation) {
         sent++;
     }
 }

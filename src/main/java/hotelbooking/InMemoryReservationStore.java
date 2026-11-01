@@ -1,5 +1,7 @@
 package hotelbooking;
 
+import hotelbooking.rooms.Room;
+
 import java.util.ArrayList;
 import java.util.List;
 

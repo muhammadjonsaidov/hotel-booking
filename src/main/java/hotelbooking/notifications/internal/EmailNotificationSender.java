@@ -1,4 +1,7 @@
-package hotelbooking;
+package hotelbooking.notifications.internal;
+
+import hotelbooking.notifications.Confirmation;
+import hotelbooking.notifications.NotificationSender;
 
 // Simulated: sends nothing and needs no network.
 public class EmailNotificationSender implements NotificationSender {
@@ -9,7 +12,7 @@ public class EmailNotificationSender implements NotificationSender {
     }
 
     @Override
-    public void sendConfirmation(Reservation reservation) {
+    public void sendConfirmation(Confirmation confirmation) {
         sent++;
     }
 }

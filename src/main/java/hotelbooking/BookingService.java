@@ -1,5 +1,10 @@
 package hotelbooking;
 
+import hotelbooking.notifications.NotificationSender;
+import hotelbooking.notifications.Confirmation;
+
+import hotelbooking.rooms.Room;
+
 import java.util.List;
 
 public class BookingService {
@@ -32,7 +37,7 @@ public class BookingService {
         Reservation reservation = new Reservation("R" + (101 + store.count()), guest, room, stay);
         store.save(reservation);
         try {
-            notifications.sendConfirmation(reservation);
+            notifications.sendConfirmation(new Confirmation(reservation.id(), guest.email(), room.number(), stay.checkIn(), stay.checkOut()));
         } catch (RuntimeException failure) {
             // The booking is already saved; report the notification failure without losing it.
             return new BookingResult("Accepted", reservation.id(), true);

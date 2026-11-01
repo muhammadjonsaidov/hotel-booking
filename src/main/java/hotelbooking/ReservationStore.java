@@ -1,5 +1,7 @@
 package hotelbooking;
 
+import hotelbooking.rooms.Room;
+
 public interface ReservationStore {
     public int count();
 

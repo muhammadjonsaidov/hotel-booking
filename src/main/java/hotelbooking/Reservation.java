@@ -1,5 +1,7 @@
 package hotelbooking;
 
+import hotelbooking.rooms.Room;
+
 public class Reservation {
     private final String id;
     private final Guest guest;
