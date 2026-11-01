@@ -9,6 +9,8 @@ import hotelbooking.reservations.internal.InMemoryReservationStore;
 import hotelbooking.notifications.internal.EmailNotificationSender;
 
 import hotelbooking.rooms.Room;
+import hotelbooking.rooms.RoomCatalog;
+import hotelbooking.rooms.internal.InMemoryRoomCatalog;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,6 +25,9 @@ public class Main {
     private static final Guest OMAR = new Guest("Omar", "omar@example.com");
     private static final Guest NORA = new Guest("Nora", "nora@example.com");
 
+    // The wiring chooses the internal implementations and connects their public contracts.
+    private static final RoomCatalog CATALOG = new InMemoryRoomCatalog(List.of(R7, R8));
+
     private Main() {}
 
     public static void main(String[] args) throws InterruptedException {
@@ -32,7 +37,7 @@ public class Main {
     private static void runDemo() {
         InMemoryReservationStore store = new InMemoryReservationStore();
         EmailNotificationSender email = new EmailNotificationSender();
-        BookingService service = new BookingService(List.of(R7, R8), store, email);
+        BookingService service = new BookingService(CATALOG.all(), store, email);
 
         System.out.println("Free rooms 12-14 Nov: " + names(service.findFreeRooms(nov(12, 14))));
         System.out.println("Maya books R7 12-14 Nov: " + service.reserve(MAYA, R7, nov(12, 14)));
@@ -48,7 +53,7 @@ public class Main {
     private static void runRace() throws InterruptedException {
         InMemoryReservationStore store = new InMemoryReservationStore();
         // Each request now spends half a second between checking and saving.
-        BookingService service = new BookingService(List.of(R7, R8), store, new EmailNotificationSender(), 500);
+        BookingService service = new BookingService(CATALOG.all(), store, new EmailNotificationSender(), 500);
         DateRange stay = nov(12, 14);
         BookingResult[] results = new BookingResult[2];
 
