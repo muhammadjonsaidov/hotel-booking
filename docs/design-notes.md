@@ -84,3 +84,9 @@ Race: still double-books R7 for 12–14 November; Maya receives Accepted R101, O
 | Reservations | BookingService, BookingResult, Reservation, DateRange, Guest, ReservationStatus, ReservationStore | InMemoryReservationStore |
 | Payments | PaymentStatus, PaymentService | SimulatedPaymentService |
 | Notifications | Confirmation, NotificationSender | EmailNotificationSender, SmsNotificationSender |
+
+## Architecture rules
+
+- Reservations uses only the public contracts of other modules; it must not depend on their internal implementations.
+- Rooms does not depend on Reservations, Payments or Notifications.
+- Payments and Notifications do not depend on Reservations, keeping dependencies in one direction.
