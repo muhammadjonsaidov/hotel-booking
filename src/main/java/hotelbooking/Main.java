@@ -13,6 +13,7 @@ import hotelbooking.reservations.internal.InMemoryReservationStore;
 import hotelbooking.reservations.internal.PostgresReservationStore;
 
 import hotelbooking.notifications.internal.EmailNotificationSender;
+import hotelbooking.notifications.internal.QueuedNotificationSender;
 
 import hotelbooking.rooms.Room;
 import hotelbooking.rooms.RoomCatalog;
@@ -63,9 +64,14 @@ public class Main {
     @Bean
     HotelApi hotelApi(EntityManager db, TransactionTemplate transactions, StringRedisTemplate redis) {
         List<Room> rooms = new PostgresRoomCatalog(db).all();
-        // P10 Step 1: HOTEL_EMAIL_SECONDS=1 makes the confirmation sender as slow as a real mail server.
-        double emailSeconds = Double.parseDouble(System.getenv().getOrDefault("HOTEL_EMAIL_SECONDS", "0"));
-        EmailNotificationSender email = new EmailNotificationSender(emailSeconds);
+        // P10: the mail server is slow, and the booking no longer waits for it.
+        // HOTEL_EMAIL_SECONDS makes the sender as slow as a real one; the queue is what keeps that
+        // out of the request. HOTEL_QUEUE_CAPACITY and HOTEL_WORKERS size the queue and its workers.
+        EmailNotificationSender email = new EmailNotificationSender(
+                Double.parseDouble(System.getenv().getOrDefault("HOTEL_EMAIL_SECONDS", "0")));
+        QueuedNotificationSender notifications = new QueuedNotificationSender(email,
+                Integer.parseInt(System.getenv().getOrDefault("HOTEL_QUEUE_CAPACITY", "10")),
+                Integer.parseInt(System.getenv().getOrDefault("HOTEL_WORKERS", "1")));
         Stats stats = new Stats();
         try (RedisConnection connection = redis.getRequiredConnectionFactory().getConnection()) {
             connection.ping(); // stop here if Redis is not running
@@ -76,7 +82,7 @@ public class Main {
         // One request: a fresh store in its own transaction, counted for GET /stats; save what changed at the end.
         HotelApi.UnitOfWork unitOfWork = work -> transactions.execute(transaction -> {
             PostgresReservationStore store = new PostgresReservationStore(db, rooms);
-            var result = work.apply(new BookingService(rooms, new CountingReservationStore(store, stats), email, slowStepMs));
+            var result = work.apply(new BookingService(rooms, new CountingReservationStore(store, stats), notifications, slowStepMs));
             if (store.wasRefused()) {
                 // The booking rule refused a save, so PostgreSQL has aborted this transaction and
                 // no further statement in it can run. Nothing should be written anyway: roll back
