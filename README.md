@@ -38,7 +38,7 @@ Confirmation emails sent: 2
 - Cancellation keeps the reservation as Cancelled and frees its nights.
 - Notification failure keeps the booking saved and Accepted, with `notificationFailed` set to `true`.
 
-All data lives in memory and is lost when the process exits. Email and SMS senders are simulated counters. The payment simulation returns `PAID` for positive amounts and `DECLINED` for zero or negative amounts; booking does not call it yet.
+The web app keeps rooms and reservations in PostgreSQL, so bookings survive a restart; the console demo and race still use in-memory lists that are lost when the process exits. Email and SMS senders are simulated counters. The payment simulation returns `PAID` for positive amounts and `DECLINED` for zero or negative amounts; booking does not call it yet.
 
 ## Demonstrate the booking race
 

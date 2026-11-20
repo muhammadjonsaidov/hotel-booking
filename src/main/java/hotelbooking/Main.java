@@ -7,12 +7,16 @@ import hotelbooking.reservations.BookingResult;
 import hotelbooking.reservations.DateRange;
 import hotelbooking.reservations.Guest;
 import hotelbooking.reservations.internal.InMemoryReservationStore;
+import hotelbooking.reservations.internal.PostgresReservationStore;
 
 import hotelbooking.notifications.internal.EmailNotificationSender;
 
 import hotelbooking.rooms.Room;
 import hotelbooking.rooms.RoomCatalog;
 import hotelbooking.rooms.internal.InMemoryRoomCatalog;
+import hotelbooking.rooms.internal.PostgresRoomCatalog;
+
+import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,8 +26,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.transaction.support.TransactionTemplate;
 
-// ./gradlew bootRun             -> the API on http://localhost:5080 (first: docker compose up -d)
+// ./gradlew bootRun             -> the API on http://localhost:5080, with PostgreSQL (first: docker compose up -d)
 // ./gradlew run --args="--demo" -> the P06 demo, with the data in lists
 // ./gradlew run --args="--race" -> two guests book the same room at the same moment
 
@@ -47,13 +52,19 @@ public class Main {
         else SpringApplication.run(Main.class, args);
     }
 
-    // The wiring for the web app. Until Step 8 the reservations stay in a list in memory.
+    // The wiring for the web app: rooms and reservations live in PostgreSQL.
     @Bean
-    HotelApi hotelApi() {
-        List<Room> rooms = CATALOG.all();
-        BookingService service = new BookingService(rooms, new InMemoryReservationStore(), new EmailNotificationSender());
-        // A list in memory has nothing to save at the end of a request.
-        return new HotelApi(rooms, work -> work.apply(service));
+    HotelApi hotelApi(EntityManager db, TransactionTemplate transactions) {
+        List<Room> rooms = new PostgresRoomCatalog(db).all();
+        EmailNotificationSender email = new EmailNotificationSender();
+        // One request: a fresh store in its own transaction; save what changed at the end.
+        HotelApi.UnitOfWork unitOfWork = work -> transactions.execute(transaction -> {
+            PostgresReservationStore store = new PostgresReservationStore(db, rooms);
+            var result = work.apply(new BookingService(rooms, store, email));
+            store.saveChanges();
+            return result;
+        });
+        return new HotelApi(rooms, unitOfWork);
     }
 
     private static void runDemo() {
