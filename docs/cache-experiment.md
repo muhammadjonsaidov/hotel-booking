@@ -39,3 +39,18 @@ a 409, 400 or 404 leaves it unchanged. The same four requests as in Step 5, from
 
 GET /stats after the four requests: {"searches":2,"databaseQueries":8,"cacheHits":0,"cacheMisses":2}.
 Without the invalidate line in POST, the test aBookingAndACancelMakeTheNextSearchFresh fails: the stale R7 comes back.
+
+## Hot key and the next bottleneck (Step 7)
+
+- New Year: when everyone searches 31 Dec–2 Jan, a single key answers almost every search,
+  availability:v{version}:2026-12-31:2027-01-02. Measured: 1,000 searches gave 999 hits, 1 miss
+  and 2 database queries, all from availability:v1:2026-12-31:2027-01-02. That key is hot: one Redis
+  server does nearly all the work, even if Redis is later spread over several servers.
+- Each New Year booking raises the version and so throws that hot copy away. Measured: Maya's booking
+  for R7 (201 R102) moved the version from 1 to 2; the next search missed, asked PostgreSQL and stored
+  availability:v2:2026-12-31:2027-01-02 (R8 only), while the old v1 copy waited out its 30 seconds.
+  In a busy sale every booking sends the next search back to PostgreSQL.
+- Searches now cost Redis, not PostgreSQL. What is left for PostgreSQL is POST /reservations:
+  that booking cost exactly 3 questions (the overlap check, the count for the new id and the save),
+  and they must be exact. Two bookings for the same room at the same moment can still both pass the
+  check (the P03 race). That is the next bottleneck: P09.
