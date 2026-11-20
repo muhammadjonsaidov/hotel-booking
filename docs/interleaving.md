@@ -79,12 +79,38 @@ psql showed R101 and R102, both Confirmed for R7, 2026-11-12 to 2026-11-14. Each
 GET /stats counted only its own 3 database queries: the two processes share nothing but the database.
 The ids still differ because the sequence lives in that shared database; the booking rule does not.
 
+## SELECT … FOR UPDATE on a guard row (Step 5)
+
+A guard table owned by Reservations, one row per room, created in the running database:
+`CREATE TABLE room_booking_guard (room text PRIMARY KEY, version integer NOT NULL DEFAULT 0)`
+with rows for R7 and R8. Two psql sessions on an empty database: terminal A (Maya) held its
+transaction open for one second after its check; terminal B (Omar) started 0.1 s after A.
+Times are from PostgreSQL's own clock.
+
+```
+18:12:37.287  Maya   BEGIN
+18:12:37.288  Maya   SELECT ... FOR UPDATE returned, so Maya holds the lock on R7
+18:12:37.288  Maya   overlap check sees 0
+18:12:37.386  Omar   BEGIN
+18:12:37.387  Omar   SELECT ... FOR UPDATE  ... waiting ...
+18:12:38.293  Maya   INSERT R101
+18:12:38.293  Maya   COMMIT, which releases the lock
+18:12:38.295  Omar   ... the wait ends, Omar now holds the lock (waited 0.91 s)
+18:12:38.296  Omar   overlap check sees 1
+18:12:38.296  Omar   refuses: Unavailable (nothing inserted)
+
+Confirmed reservations for R7: 1
+```
+
+Because both sessions lock the same row, which always exists, the second check runs only after the
+first booking has committed, and it sees it.
+
 ## The four repairs, and what each one cost
 
 | Repair | Did it stop the double booking? | What it cost, measured |
 |---|---|---|
 | In-process lock | With one instance, yes. With two, no. | Almost nothing: one lock, held only while save checks and appends. With one process `--race` now gives Maya Accepted R101, Omar Unavailable, and 1 Confirmed reservation for R7. |
-| `SELECT ... FOR UPDATE` on a guard row | | |
+| `SELECT ... FOR UPDATE` on a guard row | Yes | Omar waited **0.91 seconds** at his `FOR UPDATE` for a room he was never going to get. Every booking for a room queues behind the one in front, for as long as that transaction lasts, including any slow work inside it. |
 | Optimistic version checking | | |
 | Exclusion constraint | | |
 
