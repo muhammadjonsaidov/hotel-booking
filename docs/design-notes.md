@@ -102,3 +102,9 @@ Demo: all nine lines match the Before baseline exactly, including Accepted R101 
 Race: matches the Before baseline exactly; R7 still has 2 Confirmed reservations for 12–14 November, with Maya accepted as R101 and Omar as R102.
 
 # P07 design notes
+
+## API decisions
+
+- Order of free rooms: the search lists rooms sorted by room number as text, so R10 comes before R7, and the "after" cursor compares text the same way; every client therefore knows where the next page starts.
+- What clients compare: an error is identified by its title, such as Unavailable or NotFound; detail is a sentence for people and may be reworded without breaking clients.
+- Room type: not a fixed list in the contract but catalog data from the rooms table, such as Standard or Deluxe, so the hotel can add a new type without changing the API.
