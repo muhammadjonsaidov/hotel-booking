@@ -145,14 +145,18 @@ public class HotelApi {
         if (room == null) return problem(400, "UnknownRoom", "There is no room " + body.get("room") + ".");
 
         Guest guest = new Guest((String) body.get("guestName"), (String) body.get("guestEmail"));
-        return unitOfWork.run(service -> toHttp(service.reserve(guest, room, new DateRange(start, end))));
+        ResponseEntity<?> answer = unitOfWork.run(service -> toHttp(service.reserve(guest, room, new DateRange(start, end))));
+        if (answer.getStatusCode().value() == 201) cache.invalidate(); // after the unit of work: the booking is saved in PostgreSQL
+        return answer;
     }
 
     @DeleteMapping("/reservations/{id}")
     public ResponseEntity<?> cancel(@PathVariable String id) {
-        return unitOfWork.run(service -> service.cancel(id)
+        ResponseEntity<?> answer = unitOfWork.run(service -> service.cancel(id)
             ? ResponseEntity.noContent().build()
             : problem(404, "NotFound", "There is no confirmed reservation " + id + "."));
+        if (answer.getStatusCode().value() == 204) cache.invalidate(); // after the unit of work: the cancel is saved in PostgreSQL
+        return answer;
     }
 
     // A body that is not JSON at all.

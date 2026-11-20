@@ -25,3 +25,17 @@ The cache removes 1,998 of 2,000 database queries. With 40 rooms it would remove
 
 Seen on this app: all four requests ran within one second of the first search. At that moment
 PostgreSQL held R101 for R7 (Confirmed) while Redis still held availability:v0:2026-11-12:2026-11-14 = "R7,R8".
+
+## After invalidation (Step 6)
+
+A successful POST (201) or DELETE (204) raises availability:version after the unit of work has saved the change;
+a 409, 400 or 404 leaves it unchanged. The same four requests as in Step 5, from an empty database and cache:
+
+1. Search 12–14 Nov: R7 and R8 (a miss under version 0: availability:v0:2026-11-12:2026-11-14 = "R7,R8").
+2. Maya books R7 for 12–14 Nov: 201 R101. The version goes from 0 to 1.
+3. Search again within 30 s: R8 only. FRESH: the key is now availability:v1:2026-11-12:2026-11-14,
+   a miss, so PostgreSQL answered. The old v0 copy is never read again and expires with its TTL.
+4. Omar asks for R7 for 13–15 Nov: 409 Unavailable. Nothing was saved, so the version stays 1.
+
+GET /stats after the four requests: {"searches":2,"databaseQueries":8,"cacheHits":0,"cacheMisses":2}.
+Without the invalidate line in POST, the test aBookingAndACancelMakeTheNextSearchFresh fails: the stale R7 comes back.

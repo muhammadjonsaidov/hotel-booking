@@ -2,6 +2,7 @@ package hotelbooking;
 
 // The four API tests: HTTP in, HTTP out, with the reservations in a list.
 // Run them with the other tests from the hotel-booking folder:  ./gradlew test
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,6 +33,10 @@ class ApiTests {
         {"guestName":"Maya","guestEmail":"maya@example.com","room":"R7","checkIn":"2026-11-12","checkOut":"2026-11-14"}""";
     static final String OMAR = """
         {"guestName":"Omar","guestEmail":"omar@example.com","room":"R7","checkIn":"2026-11-13","checkOut":"2026-11-15"}""";
+    static final String BOTH_FREE = """
+        {"checkIn":"2026-11-12","checkOut":"2026-11-14","rooms":[{"number":"R7","type":"Standard"},{"number":"R8","type":"Deluxe"}],"next":null}""";
+    static final String ONLY_R8 = """
+        {"checkIn":"2026-11-12","checkOut":"2026-11-14","rooms":[{"number":"R8","type":"Deluxe"}],"next":null}""";
 
     // Redis's three commands on a map. The tests run in a second, so the 30 s TTL never ends.
     static class InMemoryKeyValueStore implements AvailabilityCache.KeyValueStore {
@@ -98,5 +103,25 @@ class ApiTests {
         app.perform(delete("/reservations/R101"))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.title").value("NotFound"));
+    }
+
+    @Test
+    void theSecondSearchIsAnsweredByTheCache() throws Exception {
+        MockMvc app = newApp();
+        String first = app.perform(get(SEARCH)).andReturn().getResponse().getContentAsString();
+        String second = app.perform(get(SEARCH)).andReturn().getResponse().getContentAsString();
+        assertEquals(first, second);
+        app.perform(get("/stats")).andExpect(content().string("""
+            {"searches":2,"databaseQueries":2,"cacheHits":1,"cacheMisses":1}"""));
+    }
+
+    @Test
+    void aBookingAndACancelMakeTheNextSearchFresh() throws Exception {
+        MockMvc app = newApp();
+        app.perform(get(SEARCH)).andExpect(content().string(BOTH_FREE));
+        app.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON).content(MAYA)).andExpect(status().isCreated());
+        app.perform(get(SEARCH)).andExpect(content().string(ONLY_R8));
+        app.perform(delete("/reservations/R101")).andExpect(status().isNoContent());
+        app.perform(get(SEARCH)).andExpect(content().string(BOTH_FREE));
     }
 }
