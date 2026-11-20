@@ -125,3 +125,7 @@ Seven answers: against an empty PostgreSQL database every request in docs/api-ch
 Restart check: Maya booked R7 again as R102, the app was stopped and started, and the search still showed only R8 free; the reservations table holds R101 Cancelled and R102 Confirmed.
 
 # P08 design notes
+
+## Cache rule
+
+Booking never reads the cache: POST /reservations and DELETE /reservations/{id} always ask PostgreSQL, so a stale search copy can mislead a guest for up to 30 seconds but can never cause a double booking.
