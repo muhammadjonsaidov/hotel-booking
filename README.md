@@ -8,12 +8,14 @@ Use JDK 25, the Java version used to verify this project. The Gradle wrapper is 
 
 ```sh
 ./gradlew test
-./gradlew run
+docker compose up -d            # PostgreSQL 18 with the rooms and reservations tables
+./gradlew bootRun               # the web app on http://localhost:5080 (contract: /openapi.yaml)
+./gradlew run --args="--demo"   # the console demo
 ```
 
 On Windows, use `gradlew.bat` instead of `./gradlew`.
 
-The normal demo prints:
+The demo prints:
 
 ```text
 Free rooms 12-14 Nov: R7, R8

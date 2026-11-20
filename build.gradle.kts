@@ -1,6 +1,8 @@
 plugins {
     id("java")
     application
+    // P07: Spring Boot builds and runs the web app (./gradlew bootRun).
+    id("org.springframework.boot") version "4.1.2"
 }
 
 application {
@@ -15,8 +17,15 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:6.0.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    // P07: Spring Boot chooses matching versions for the web, database and test libraries.
+    implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
+    testImplementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
+
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.postgresql:postgresql")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("com.tngtech.archunit:archunit-junit6:1.5.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

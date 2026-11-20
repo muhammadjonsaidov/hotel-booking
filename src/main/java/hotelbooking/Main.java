@@ -1,5 +1,7 @@
 package hotelbooking;
 
+import hotelbooking.api.HotelApi;
+
 import hotelbooking.reservations.BookingService;
 import hotelbooking.reservations.BookingResult;
 import hotelbooking.reservations.DateRange;
@@ -16,8 +18,19 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// ./gradlew run                 -> the normal demo
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+
+// ./gradlew bootRun             -> the API on http://localhost:5080 (first: docker compose up -d)
+// ./gradlew run --args="--demo" -> the P06 demo, with the data in lists
 // ./gradlew run --args="--race" -> two guests book the same room at the same moment
+
+// Spring Boot starts the web server and connects to PostgreSQL (application.properties);
+// hotelApi below is the wiring that hands it the endpoints.
+@SpringBootConfiguration
+@EnableAutoConfiguration
 public class Main {
     private static final Room R7 = new Room("R7", "Standard");
     private static final Room R8 = new Room("R8", "Deluxe");
@@ -28,10 +41,19 @@ public class Main {
     // The wiring chooses the internal implementations and connects their public contracts.
     private static final RoomCatalog CATALOG = new InMemoryRoomCatalog(List.of(R7, R8));
 
-    private Main() {}
-
     public static void main(String[] args) throws InterruptedException {
-        if (List.of(args).contains("--race")) runRace(); else runDemo();
+        if (List.of(args).contains("--race")) runRace();
+        else if (List.of(args).contains("--demo")) runDemo();
+        else SpringApplication.run(Main.class, args);
+    }
+
+    // The wiring for the web app. Until Step 8 the reservations stay in a list in memory.
+    @Bean
+    HotelApi hotelApi() {
+        List<Room> rooms = CATALOG.all();
+        BookingService service = new BookingService(rooms, new InMemoryReservationStore(), new EmailNotificationSender());
+        // A list in memory has nothing to save at the end of a request.
+        return new HotelApi(rooms, work -> work.apply(service));
     }
 
     private static void runDemo() {
