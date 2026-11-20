@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Hotel booking API
-  version: 1.1.0
+  version: 1.2.0
   description: Search free rooms, book a room and cancel a reservation.
 servers:
   - url: http://localhost:5080
@@ -151,6 +151,18 @@ components:
         databaseQueries: { type: integer, minimum: 0, description: Questions the reservation store sent to PostgreSQL. }
         cacheHits: { type: integer, minimum: 0, description: Searches answered from a copy in Redis. }
         cacheMisses: { type: integer, minimum: 0, description: Searches that found no copy and asked PostgreSQL. }
+        notificationsAccepted:
+          type: integer
+          description: Confirmation emails the queue took.
+        notificationsRejected:
+          type: integer
+          description: Confirmation emails refused because the queue was full. The booking still succeeded.
+        notificationsCompleted:
+          type: integer
+          description: Confirmation emails the worker has finished sending.
+        notificationsQueued:
+          type: integer
+          description: Confirmation emails waiting right now.
   responses:
     Problem:
       description: What went wrong, as problem details (RFC 9457).
