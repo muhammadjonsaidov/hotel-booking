@@ -57,11 +57,35 @@ either request read ever changed; Serializable does, by aborting one of the two.
 `SELECT … FOR UPDATE` on the overlapping reservations locks the rows that query returns, and at
 check time (rows 2 and 4) it returns none: you cannot lock a row that does not exist yet.
 
+## Two instances (Step 4)
+
+The same race, sent to two copies of the app that share one PostgreSQL and one Redis:
+`HOTEL_SLOW_STEP=1` on port 5080 and `HOTEL_SLOW_STEP=1 HOTEL_PORT=5081` on port 5081
+(built once with `./gradlew bootJar` and started twice with `java -jar`), then
+`java tools/RaceHttp.java http://localhost:5081`. The code did not change.
+
+```
+Two bookings for R7, 2026-11-12 to 2026-11-14, sent at the same moment.
+Maya -> http://localhost:5080   Omar -> http://localhost:5081
+
+Maya -> 201 Created   {"id":"R101","status":"Confirmed","notificationFailed":false}
+Omar -> 201 Created   {"id":"R102","status":"Confirmed","notificationFailed":false}
+
+Confirmed reservations for R7 on 12-14 Nov: 2
+DOUBLE BOOKED: the room has two confirmed reservations for the same nights.
+```
+
+psql showed R101 and R102, both Confirmed for R7, 2026-11-12 to 2026-11-14. Each instance's
+GET /stats counted only its own 3 database queries: the two processes share nothing but the database.
+The ids still differ because the sequence lives in that shared database; the booking rule does not.
+
 ## The four repairs, and what each one cost
 
 | Repair | Did it stop the double booking? | What it cost, measured |
 |---|---|---|
-| In-process lock | (answered after Step 4) | Almost nothing: one lock, held only while save checks and appends. With one process `--race` now gives Maya Accepted R101, Omar Unavailable, and 1 Confirmed reservation for R7. |
+| In-process lock | With one instance, yes. With two, no. | Almost nothing: one lock, held only while save checks and appends. With one process `--race` now gives Maya Accepted R101, Omar Unavailable, and 1 Confirmed reservation for R7. |
 | `SELECT ... FOR UPDATE` on a guard row | | |
 | Optimistic version checking | | |
 | Exclusion constraint | | |
+
+A rule that several processes must obey has to live in the one thing they all share: the database.
