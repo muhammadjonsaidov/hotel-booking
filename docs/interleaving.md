@@ -105,13 +105,43 @@ Confirmed reservations for R7: 1
 Because both sessions lock the same row, which always exists, the second check runs only after the
 first booking has committed, and it sees it.
 
+## Optimistic version checking (Step 6)
+
+The same guard row, without a lock. The guard row was reset to version 0 and the reservation from
+Step 5 deleted. Terminal A (Maya) read the version with a plain SELECT, checked, and held its
+transaction for one second before claiming; terminal B (Omar) started 0.1 s after A. Each claim is
+`UPDATE room_booking_guard SET version = version + 1 WHERE room = 'R7' AND version = <what it read>`.
+Times are from PostgreSQL's own clock.
+
+```
+18:14:00.220  Maya   BEGIN
+18:14:00.221  Maya   reads version = 0   (a plain SELECT: no lock, waited 0.001 s)
+18:14:00.221  Maya   overlap check sees 0
+18:14:00.337  Omar   BEGIN
+18:14:00.337  Omar   reads version = 0   (the same 0; waited 0.001 s)
+18:14:00.338  Omar   overlap check sees 0
+18:14:00.338  Omar   UPDATE ... WHERE version = 0 matched 1 row, so Omar owns the claim (waited 0.001 s)
+18:14:00.339  Omar   INSERT R102, COMMIT
+18:14:01.230  Maya   UPDATE ... WHERE version = 0 matched 0 rows (waited 0.001 s)
+18:14:01.230  Maya   ROLLBACK, then try again
+18:14:01.231  Maya   reads version = 1
+18:14:01.232  Maya   overlap check sees 1
+18:14:01.232  Maya   refuses: Unavailable (nothing inserted)
+
+Confirmed reservations for R7: 1 (R102 Omar)
+```
+
+Matching 0 rows is not an error; it is how the loser learns that what it read is out of date. The
+retry has to redo the read and the overlap check too, not just the UPDATE, and a real retry loop
+needs a limit.
+
 ## The four repairs, and what each one cost
 
 | Repair | Did it stop the double booking? | What it cost, measured |
 |---|---|---|
 | In-process lock | With one instance, yes. With two, no. | Almost nothing: one lock, held only while save checks and appends. With one process `--race` now gives Maya Accepted R101, Omar Unavailable, and 1 Confirmed reservation for R7. |
 | `SELECT ... FOR UPDATE` on a guard row | Yes | Omar waited **0.91 seconds** at his `FOR UPDATE` for a room he was never going to get. Every booking for a room queues behind the one in front, for as long as that transaction lasts, including any slow work inside it. |
-| Optimistic version checking | | |
+| Optimistic version checking | Yes | **Nobody waited**: every statement, the losing UPDATE included, took about 1 ms. Both sessions read `version = 0`; Maya's `UPDATE ... WHERE version = 0` matched 0 rows, so she rolled back and did her read and check a second time before refusing. Cheap when clashes are rare, wasteful when they are common. |
 | Exclusion constraint | | |
 
 A rule that several processes must obey has to live in the one thing they all share: the database.
