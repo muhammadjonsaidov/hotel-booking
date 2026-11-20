@@ -20,6 +20,19 @@ public class Reservation {
         return id;
     }
 
+    // P07: the PostgreSQL store needs the guest, room and stay to write the reservation's row.
+    public Guest guest() {
+        return guest;
+    }
+
+    public Room room() {
+        return room;
+    }
+
+    public DateRange stay() {
+        return stay;
+    }
+
     public ReservationStatus status() {
         return status;
     }
