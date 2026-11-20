@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import hotelbooking.api.CountingReservationStore;
 import hotelbooking.api.HotelApi;
+import hotelbooking.api.Stats;
 import hotelbooking.notifications.internal.EmailNotificationSender;
 import hotelbooking.reservations.BookingService;
 import hotelbooking.reservations.internal.InMemoryReservationStore;
@@ -30,9 +32,10 @@ class ApiTests {
 
     // The web app with the in-memory store; MockMvc sends requests to it without a network.
     static MockMvc newApp() {
-        BookingService service = new BookingService(ROOMS, new InMemoryReservationStore(), new EmailNotificationSender());
+        Stats stats = new Stats();
+        BookingService service = new BookingService(ROOMS, new CountingReservationStore(new InMemoryReservationStore(), stats), new EmailNotificationSender());
         // A list in memory has nothing to save at the end of a request.
-        return MockMvcBuilders.standaloneSetup(new HotelApi(ROOMS, work -> work.apply(service))).build();
+        return MockMvcBuilders.standaloneSetup(new HotelApi(ROOMS, work -> work.apply(service), stats)).build();
     }
 
     @Test

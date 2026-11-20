@@ -27,9 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-// The HTTP API: three endpoints that turn HTTP requests into BookingService calls and back. It lives
-// outside the four modules and uses only their public contracts; Main decides which store the
-// endpoints use, through the unit of work.
+// The HTTP API: three endpoints that turn HTTP requests into BookingService calls and back,
+// and GET /stats with what the searches cost. It lives outside the four modules and uses only
+// their public contracts; Main decides which store the endpoints use, through the unit of work.
 @RestController
 public class HotelApi {
     // Runs one request's work with a BookingService, then saves whatever changed.
@@ -50,10 +50,12 @@ public class HotelApi {
 
     private final List<Room> rooms;
     private final UnitOfWork unitOfWork;
+    private final Stats stats;
 
-    public HotelApi(List<Room> rooms, UnitOfWork unitOfWork) {
+    public HotelApi(List<Room> rooms, UnitOfWork unitOfWork, Stats stats) {
         this.rooms = rooms;
         this.unitOfWork = unitOfWork;
+        this.stats = stats;
     }
 
     static ResponseEntity<?> problem(int status, String title, String detail) {
@@ -84,6 +86,11 @@ public class HotelApi {
         return Files.readString(Path.of("docs/openapi.yaml"));
     }
 
+    @GetMapping("/stats")
+    public ResponseEntity<?> readStats() {
+        return ResponseEntity.ok(stats.counts());
+    }
+
     @GetMapping("/rooms/availability")
     public ResponseEntity<?> findFreeRooms(@RequestParam(required = false) String checkIn, @RequestParam(required = false) String checkOut,
                                            @RequestParam(required = false) String limit, @RequestParam(defaultValue = "") String after) {
@@ -97,6 +104,7 @@ public class HotelApi {
             return problem(400, "InvalidRequest", "limit must be a whole number from 1 to 100.");
         }
 
+        stats.searches.incrementAndGet();
         return unitOfWork.run(service -> {
             // Cursor pagination (L04): the rooms after the last one the client has seen, in text order.
             List<Room> rest = service.findFreeRooms(stay).stream().filter(room -> room.number().compareTo(after) > 0)

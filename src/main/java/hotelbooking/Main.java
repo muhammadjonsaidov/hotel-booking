@@ -1,6 +1,8 @@
 package hotelbooking;
 
+import hotelbooking.api.CountingReservationStore;
 import hotelbooking.api.HotelApi;
+import hotelbooking.api.Stats;
 
 import hotelbooking.reservations.BookingService;
 import hotelbooking.reservations.BookingResult;
@@ -57,14 +59,15 @@ public class Main {
     HotelApi hotelApi(EntityManager db, TransactionTemplate transactions) {
         List<Room> rooms = new PostgresRoomCatalog(db).all();
         EmailNotificationSender email = new EmailNotificationSender();
-        // One request: a fresh store in its own transaction; save what changed at the end.
+        Stats stats = new Stats();
+        // One request: a fresh store in its own transaction, counted for GET /stats; save what changed at the end.
         HotelApi.UnitOfWork unitOfWork = work -> transactions.execute(transaction -> {
             PostgresReservationStore store = new PostgresReservationStore(db, rooms);
-            var result = work.apply(new BookingService(rooms, store, email));
+            var result = work.apply(new BookingService(rooms, new CountingReservationStore(store, stats), email));
             store.saveChanges();
             return result;
         });
-        return new HotelApi(rooms, unitOfWork);
+        return new HotelApi(rooms, unitOfWork, stats);
     }
 
     private static void runDemo() {
