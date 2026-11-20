@@ -135,3 +135,5 @@ Booking never reads the cache: POST /reservations and DELETE /reservations/{id} 
 Checks: all 17 pass (8 behaviour tests, 3 architecture rules and 6 API tests); --demo prints the same nine lines and --race still double-books R7.
 Measurements: 1,000 searches for 12–14 Nov cost 2,000 database queries without the cache (average 2.0 ms, p95 3.4 ms) and 2 with it (999 hits, 1 miss; average 1.4 ms, p95 2.4 ms); the final run gave the same counts.
 Stale result and its fix: without invalidation a search right after Maya's booking still listed R7 while Omar got 409; raising availability:version on every 201 and 204 made the same search answer R8 only.
+
+# P09 design notes
