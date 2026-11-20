@@ -47,3 +47,35 @@ again with `HOTEL_EMAIL_SECONDS=1 ./gradlew bootRun`, and three single bookings 
 The same booking that took 1.11 s now answers in 6–8 ms (the first request pays for warming up the JVM and
 the connections). The email is no longer sent inside the request: it waits on the queue, and the worker
 sends it a second later, while nobody is waiting.
+
+## Why an unbounded queue is not the answer
+
+The app was started with `HOTEL_EMAIL_SECONDS=1 HOTEL_QUEUE_CAPACITY=10000 ./gradlew bootRun`, a queue so
+large that nothing is ever refused, on an empty database. GET /stats now also publishes the queue's four
+counters. Then `java tools/Burst.java`:
+
+```
+Sending 30 bookings, one after another...
+
+Accepted: 30
+Rejected: 0
+Slowest booking: 150 ms
+Total: 0.3 s
+
+GET /stats
+{"searches":0,"databaseQueries":90,"cacheHits":0,"cacheMisses":0,"notificationsAccepted":30,"notificationsRejected":0,"notificationsCompleted":0,"notificationsQueued":29}
+```
+
+Ten seconds later:
+
+```
+{"searches":0,"databaseQueries":90,"cacheHits":0,"cacheMisses":0,"notificationsAccepted":30,"notificationsRejected":0,"notificationsCompleted":10,"notificationsQueued":19}
+```
+
+Accepted 30, rejected 0, queued 29: every guest was answered at once (0.3 s for all thirty, against 30.6 s
+before), and 29 emails sat in memory behind a worker that sends one a second (the thirtieth was being sent).
+Nothing refused them.
+
+A burst of thirty thousand would have been accepted just the same: thirty thousand emails held in memory,
+more than eight hours of sending at one a second, until the process ran out of memory and took the bookings
+down with the emails.

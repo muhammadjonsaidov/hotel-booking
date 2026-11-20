@@ -1,5 +1,6 @@
 package hotelbooking.api;
 
+import hotelbooking.notifications.CountingNotificationSender;
 import hotelbooking.reservations.BookingResult;
 import hotelbooking.reservations.BookingService;
 import hotelbooking.reservations.DateRange;
@@ -53,12 +54,20 @@ public class HotelApi {
     private final UnitOfWork unitOfWork;
     private final Stats stats;
     private final AvailabilityCache cache;
+    // P10: the notification queue, whose counters GET /stats also publishes; null when there is none.
+    private final CountingNotificationSender notifications;
 
     public HotelApi(List<Room> rooms, UnitOfWork unitOfWork, Stats stats, AvailabilityCache cache) {
+        this(rooms, unitOfWork, stats, cache, null);
+    }
+
+    public HotelApi(List<Room> rooms, UnitOfWork unitOfWork, Stats stats, AvailabilityCache cache,
+                    CountingNotificationSender notifications) {
         this.rooms = rooms;
         this.unitOfWork = unitOfWork;
         this.stats = stats;
         this.cache = cache;
+        this.notifications = notifications;
     }
 
     static ResponseEntity<?> problem(int status, String title, String detail) {
@@ -91,7 +100,8 @@ public class HotelApi {
 
     @GetMapping("/stats")
     public ResponseEntity<?> readStats() {
-        return ResponseEntity.ok(stats.counts());
+        if (notifications == null) return ResponseEntity.ok(stats.counts());
+        return ResponseEntity.ok(stats.counts(notifications.counts()));
     }
 
     @GetMapping("/rooms/availability")

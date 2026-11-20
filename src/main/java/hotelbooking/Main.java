@@ -93,7 +93,7 @@ public class Main {
             store.saveChanges();
             return result;
         });
-        return new HotelApi(rooms, unitOfWork, stats, cache);
+        return new HotelApi(rooms, unitOfWork, stats, cache, notifications);
     }
 
     private static void runDemo() {
