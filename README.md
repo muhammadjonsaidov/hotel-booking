@@ -38,7 +38,7 @@ Confirmation emails sent: 2
 - Cancellation keeps the reservation as Cancelled and frees its nights.
 - Notification failure keeps the booking saved and Accepted, with `notificationFailed` set to `true`.
 
-The web app keeps rooms and reservations in PostgreSQL, so bookings survive a restart; the console demo and race still use in-memory lists that are lost when the process exits. Email and SMS senders are simulated counters. The payment simulation returns `PAID` for positive amounts and `DECLINED` for zero or negative amounts; booking does not call it yet.
+The web app keeps rooms and reservations in PostgreSQL, so bookings survive a restart; the console demo and race still use in-memory lists that are lost when the process exits. Email and SMS senders are simulated counters. In the web app the confirmation email goes onto a bounded in-memory queue (10 jobs, one background worker), so a booking answers in milliseconds even when the sender is slow; when the queue is full the email is refused and counted, and the booking still succeeds. `HOTEL_EMAIL_SECONDS=1` makes the sender as slow as a real mail server; `HOTEL_QUEUE_CAPACITY` and `HOTEL_WORKERS` size the queue. `GET /stats` publishes `notificationsAccepted`, `notificationsRejected`, `notificationsCompleted` and `notificationsQueued`, and stopping the app (Ctrl+C or SIGTERM) drains the queue first. `java tools/Burst.java` sends thirty bookings to watch it. The payment simulation returns `PAID` for positive amounts and `DECLINED` for zero or negative amounts; booking does not call it yet.
 
 ## Demonstrate the booking race
 
@@ -76,7 +76,7 @@ The app is one program with four business modules. Each has a public contract an
 | Rooms | `Room`, `RoomCatalog` | `InMemoryRoomCatalog` |
 | Reservations | Booking service, result, domain types and `ReservationStore` | `InMemoryReservationStore` |
 | Payments | `PaymentService`, `PaymentStatus` | `SimulatedPaymentService` |
-| Notifications | `Confirmation`, `NotificationSender` | Email and SMS senders |
+| Notifications | `Confirmation`, `NotificationSender`, `CountingNotificationSender`, `NotificationCounts` | Email and SMS senders, the bounded `QueuedNotificationSender` |
 
 `Main` creates the concrete implementations and connects them. Reservations uses the other modules’ public contracts. Notifications receives its own five-field `Confirmation` message: reservation id, guest email, room number, check-in and check-out.
 
@@ -95,12 +95,12 @@ src/main/java/hotelbooking/
 
 ## Verification
 
-`./gradlew test` runs 19 checks:
+`./gradlew test` runs 22 checks:
 
 - `BookingServiceTests`: five tests for acceptance, overlap refusal, adjacent stays, invalid dates and cancellation.
 - `BookingNotificationTests`: three tests for confirmation ids, failure handling and SMS.
 - `ArchitectureTests`: three ArchUnit rules enforcing module dependencies.
-- `ApiTests`: six HTTP tests through MockMvc with the in-memory store and a map-backed cache: search, booking and conflict, invalid dates, cancel twice, a cache hit, invalidation after a booking and a cancel, two bookings at the same moment leaving one reservation, and the store refusing an overlapping save even without the pre-check.
+- `ApiTests`: eleven tests. Six go through MockMvc with the in-memory store and a map-backed cache: search, booking and conflict, invalid dates, cancel twice, a cache hit, and invalidation after a booking and a cancel. Two cover concurrency: two bookings at the same moment leave one reservation, and the store refuses an overlapping save even without the pre-check. Three cover the notification queue: handing over a slow email is immediate, a burst larger than the bound is refused and counted, and a drained shutdown finishes everything it accepted.
 
 The architecture rules prevent Reservations from depending on other modules’ internals, prevent Rooms from depending on other modules, and prevent Payments and Notifications from depending on Reservations. Test code is excluded from those dependency checks.
 
@@ -117,6 +117,7 @@ The HTML test report is available at `build/reports/tests/test/index.html` after
 - [Architecture decision](docs/adr-001-modular-monolith.md): why the app uses a modular monolith and when to reconsider that choice.
 - [Cache decision](docs/adr-002-cache-availability.md): why only the free-room search is cached in Redis, and why booking never reads the cache.
 - [Concurrency decision](docs/adr-003-booking-concurrency.md) and [interleaving](docs/interleaving.md): why the booking rule is enforced by a PostgreSQL exclusion constraint, and what the rejected repairs cost.
+- [Notification decision](docs/adr-004-notification-concurrency.md) and [queue trace](docs/queue-trace.md): why confirmation emails go through a bounded queue, the measurements before and after, and what a killed process still loses.
 - [API contract](docs/openapi.yaml), [capacity estimate](docs/capacity.md), [API check](docs/api-check.md) and [cache experiment](docs/cache-experiment.md): the HTTP API, its expected load, its verified answers against PostgreSQL, and the search measured with and without the cache (`java tools/Measure.java` while the app runs).
 - [Diagrams](docs/diagrams.drawio): open in draw.io; the Context map and Modules pages show business ownership and module dependencies.
 
@@ -129,3 +130,4 @@ The HTML test report is available at `build/reports/tests/test/index.html` after
 5. Put the app behind a Spring Boot HTTP API with an OpenAPI contract and API tests, and moved rooms and reservations into PostgreSQL.
 6. Measured the search, cached it in Redis with a 30-second TTL and version-based invalidation, and recorded the cache decision in ADR-002.
 7. Reproduced the double booking across two instances, compared four repairs with measurements, enforced the booking rule with a PostgreSQL exclusion constraint, and recorded the decision in ADR-003.
+8. Took the confirmation email out of the booking request onto a bounded queue with a background worker, counted what it accepts, refuses and completes, drained it on shutdown, and recorded the decision and its accepted losses in ADR-004.

@@ -162,3 +162,9 @@ queue itself.
 - Its limit: the queue lives in process memory, so a killed process loses every queued email without a trace (7 in the kill -9 run); only a transactional outbox (P17) fixes that.
 
 The decision, these five rejections and the two losses it accepts are recorded in docs/adr-004-notification-concurrency.md.
+
+## After
+
+Checks: all 22 pass (8 behaviour tests, 3 architecture rules and 11 API tests); with HOTEL_EMAIL_SECONDS=1 a booking answers in about 6 ms instead of 1.11 s.
+Queue: a burst of 30 gave 30 bookings, 11 emails accepted and 19 refused and counted, with queued never above 10; once the worker caught up, accepted = completed and queued = 0.
+Shutdown: Ctrl+C drained the 4 queued emails before exiting ("Nobody was owed an email"); kill -9 still loses queued emails without a trace, which ADR-004 accepts until the transactional outbox (P17).
