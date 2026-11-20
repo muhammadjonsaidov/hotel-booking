@@ -50,6 +50,15 @@ public class PostgresReservationStore implements ReservationStore {
         return countConfirmed(room, stay) > 0;
     }
 
+    // nextval never hands the same number to two callers, and it does not wait for, or roll back
+    // with, the transaction that asked for it. That is exactly what an id needs, and it is what
+    // stops two requests in this language both being given R101.
+    @Override
+    public String nextReservationId() {
+        Number next = (Number) db.createNativeQuery("SELECT nextval('reservation_ids')").getSingleResult();
+        return "R" + next.longValue();
+    }
+
     @Override
     public void save(Reservation reservation) {
         ReservationRow row = new ReservationRow();

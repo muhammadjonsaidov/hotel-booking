@@ -28,6 +28,12 @@ public class CountingReservationStore implements ReservationStore {
     }
 
     @Override
+    public String nextReservationId() {
+        stats.databaseQueries.incrementAndGet();
+        return store.nextReservationId();
+    }
+
+    @Override
     public void save(Reservation reservation) {
         stats.databaseQueries.incrementAndGet();
         store.save(reservation);

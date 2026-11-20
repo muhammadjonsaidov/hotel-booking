@@ -19,3 +19,11 @@ CREATE TABLE reservations (
 );
 
 INSERT INTO rooms (number, type) VALUES ('R7', 'Standard'), ('R8', 'Deluxe');
+
+-- P09 Step 1: reservation ids come from here, not from counting the rows.
+-- nextval never returns the same number twice, even to two transactions running at the same moment.
+CREATE SEQUENCE reservation_ids START 101;
+
+-- The running database needs it too, because init.sql only runs when the database is created.
+-- Start it above the ids that already exist, so it never collides with them.
+SELECT setval('reservation_ids', GREATEST(101, (SELECT count(*) FROM reservations) + 101), false);

@@ -34,7 +34,7 @@ public class BookingService {
 
         pause(); // does nothing normally; the race demo makes this step slow
 
-        Reservation reservation = new Reservation("R" + (101 + store.count()), guest, room, stay);
+        Reservation reservation = new Reservation(store.nextReservationId(), guest, room, stay);
         store.save(reservation);
         try {
             notifications.sendConfirmation(new Confirmation(reservation.id(), guest.email(), room.number(), stay.checkIn(), stay.checkOut()));

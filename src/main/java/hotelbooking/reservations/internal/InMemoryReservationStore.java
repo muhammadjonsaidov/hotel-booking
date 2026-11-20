@@ -23,6 +23,12 @@ public class InMemoryReservationStore implements ReservationStore {
         return rows.stream().anyMatch(row -> row.blocks(room, stay));
     }
 
+    // The list store counts its own rows: R101, R102, ...
+    @Override
+    public String nextReservationId() {
+        return "R" + (101 + rows.size());
+    }
+
     @Override
     public void save(Reservation reservation) {
         rows.add(reservation);

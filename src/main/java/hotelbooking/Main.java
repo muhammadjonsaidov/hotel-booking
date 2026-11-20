@@ -34,6 +34,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 // ./gradlew bootRun             -> the API on http://localhost:5080, with PostgreSQL (first: docker compose up -d for PostgreSQL and Redis)
+//                                  HOTEL_PORT=5081 starts a second instance; HOTEL_SLOW_STEP=1 pauses each booking 1 s between check and save
 // ./gradlew run --args="--demo" -> the P06 demo, with the data in lists
 // ./gradlew run --args="--race" -> two guests book the same room at the same moment
 
@@ -67,10 +68,12 @@ public class Main {
             connection.ping(); // stop here if Redis is not running
         }
         AvailabilityCache cache = new AvailabilityCache(new AvailabilityCache.RedisKeyValueStore(redis));
+        // P09 Step 1 widens the gap between the check and the save, so the race happens on every run.
+        int slowStepMs = (int) (Double.parseDouble(System.getenv().getOrDefault("HOTEL_SLOW_STEP", "0")) * 1000);
         // One request: a fresh store in its own transaction, counted for GET /stats; save what changed at the end.
         HotelApi.UnitOfWork unitOfWork = work -> transactions.execute(transaction -> {
             PostgresReservationStore store = new PostgresReservationStore(db, rooms);
-            var result = work.apply(new BookingService(rooms, new CountingReservationStore(store, stats), email));
+            var result = work.apply(new BookingService(rooms, new CountingReservationStore(store, stats), email, slowStepMs));
             store.saveChanges();
             return result;
         });
