@@ -160,3 +160,5 @@ queue itself.
 - Rejected, software transactional memory: there is no shared in-memory state to compose; the only shared thing is the queue, and it is already safe.
 - Kept, a bounded in-memory queue with one worker and counted rejections: one fire-and-forget stage that needs a limit is exactly what it does, and it took a one-second email out of a 1.11 s booking (now 6–8 ms) while refusing countably instead of piling up.
 - Its limit: the queue lives in process memory, so a killed process loses every queued email without a trace (7 in the kill -9 run); only a transactional outbox (P17) fixes that.
+
+The decision, these five rejections and the two losses it accepts are recorded in docs/adr-004-notification-concurrency.md.
