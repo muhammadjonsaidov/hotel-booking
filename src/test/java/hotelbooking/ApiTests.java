@@ -3,6 +3,7 @@ package hotelbooking;
 // The four API tests: HTTP in, HTTP out, with the reservations in a list.
 // Run them with the other tests from the hotel-booking folder:  ./gradlew test
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -10,15 +11,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 import hotelbooking.api.AvailabilityCache;
 import hotelbooking.api.CountingReservationStore;
 import hotelbooking.api.HotelApi;
 import hotelbooking.api.Stats;
 import hotelbooking.notifications.internal.EmailNotificationSender;
+import hotelbooking.reservations.BookingResult;
 import hotelbooking.reservations.BookingService;
+import hotelbooking.reservations.DateRange;
+import hotelbooking.reservations.Guest;
+import hotelbooking.reservations.OverlapRejectedException;
+import hotelbooking.reservations.Reservation;
 import hotelbooking.reservations.internal.InMemoryReservationStore;
 import hotelbooking.rooms.Room;
 import org.junit.jupiter.api.Test;
@@ -28,6 +37,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class ApiTests {
     static final List<Room> ROOMS = List.of(new Room("R7", "Standard"), new Room("R8", "Deluxe"));
+    static final DateRange NOV_12_14 = new DateRange(LocalDate.of(2026, 11, 12), LocalDate.of(2026, 11, 14));
     static final String SEARCH = "/rooms/availability?checkIn=2026-11-12&checkOut=2026-11-14";
     static final String MAYA = """
         {"guestName":"Maya","guestEmail":"maya@example.com","room":"R7","checkIn":"2026-11-12","checkOut":"2026-11-14"}""";
@@ -123,5 +133,39 @@ class ApiTests {
         app.perform(get(SEARCH)).andExpect(content().string(ONLY_R8));
         app.perform(delete("/reservations/R101")).andExpect(status().isNoContent());
         app.perform(get(SEARCH)).andExpect(content().string(BOTH_FREE));
+    }
+
+    // ---------------------------------------------------------------- P09
+    @Test
+    void two_bookings_at_the_same_moment_give_the_room_one_reservation() throws Exception {
+        // Step 1's race, as a test. Both requests pass the pre-check; only one may be saved.
+        InMemoryReservationStore rows = new InMemoryReservationStore();
+        Stats stats = new Stats();
+        BookingService service = new BookingService(ROOMS, new CountingReservationStore(rows, stats),
+                new EmailNotificationSender(), 300);
+
+        // Two threads, both inside the gap between the check and the save.
+        var maya = CompletableFuture.supplyAsync(
+                () -> service.reserve(new Guest("Maya", "maya@example.com"), ROOMS.get(0), NOV_12_14));
+        var omar = CompletableFuture.supplyAsync(
+                () -> service.reserve(new Guest("Omar", "omar@example.com"), ROOMS.get(0), NOV_12_14));
+
+        var outcomes = Stream.of(maya.join(), omar.join())
+                .map(BookingResult::outcome).sorted().toList();
+        assertEquals(List.of("Accepted", "Unavailable"), outcomes);
+        assertEquals(1, rows.countConfirmed(ROOMS.get(0), NOV_12_14));
+    }
+
+    @Test
+    void the_store_refuses_an_overlapping_save_even_without_the_pre_check() {
+        // The promise the exclusion constraint keeps in PostgreSQL, kept by the list store too.
+        // Nothing calls hasOverlap here: save itself must refuse.
+        InMemoryReservationStore store = new InMemoryReservationStore();
+        store.save(new Reservation("R101", new Guest("Maya", "maya@example.com"), ROOMS.get(0), NOV_12_14));
+
+        Reservation overlapping = new Reservation("R102", new Guest("Omar", "omar@example.com"), ROOMS.get(0),
+                new DateRange(LocalDate.of(2026, 11, 13), LocalDate.of(2026, 11, 15)));
+        assertThrows(OverlapRejectedException.class, () -> store.save(overlapping));
+        assertEquals(1, store.countConfirmed(ROOMS.get(0), NOV_12_14));
     }
 }

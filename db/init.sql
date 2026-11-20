@@ -2,6 +2,12 @@
 -- Rooms owns the rooms table and Reservations owns the reservations table, so there is no foreign key
 -- between them: each module keeps its own data (L03).
 
+-- P09 Step 7: the overlap rule, enforced by PostgreSQL itself.
+-- btree_gist lets a GiST index hold plain equality (room WITH =) next to a range test
+-- (daterange WITH &&). Without it PostgreSQL refuses the constraint: gist has no
+-- equality operator class for text on its own.
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
 CREATE TABLE rooms (
     number text PRIMARY KEY,
     type   text NOT NULL
@@ -15,15 +21,16 @@ CREATE TABLE reservations (
     check_in    date NOT NULL,
     check_out   date NOT NULL,
     status      text NOT NULL CHECK (status IN ('Confirmed', 'Cancelled')),
-    CHECK (check_out > check_in)
-);
+    CHECK (check_out > check_in),
 
-INSERT INTO rooms (number, type) VALUES ('R7', 'Standard'), ('R8', 'Deluxe');
+    CONSTRAINT reservations_no_overlap EXCLUDE USING gist (
+        room WITH =,
+        daterange(check_in, check_out, '[)') WITH &&
+    ) WHERE (status = 'Confirmed')
+);
 
 -- P09 Step 1: reservation ids come from here, not from counting the rows.
 -- nextval never returns the same number twice, even to two transactions running at the same moment.
 CREATE SEQUENCE reservation_ids START 101;
 
--- The running database needs it too, because init.sql only runs when the database is created.
--- Start it above the ids that already exist, so it never collides with them.
-SELECT setval('reservation_ids', GREATEST(101, (SELECT count(*) FROM reservations) + 101), false);
+INSERT INTO rooms (number, type) VALUES ('R7', 'Standard'), ('R8', 'Deluxe');

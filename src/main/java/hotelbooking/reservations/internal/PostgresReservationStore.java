@@ -4,9 +4,11 @@ import hotelbooking.reservations.DateRange;
 import hotelbooking.reservations.Guest;
 import hotelbooking.reservations.Reservation;
 import hotelbooking.reservations.ReservationStatus;
+import hotelbooking.reservations.OverlapRejectedException;
 import hotelbooking.reservations.ReservationStore;
 import hotelbooking.rooms.Room;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -50,6 +52,20 @@ public class PostgresReservationStore implements ReservationStore {
         return countConfirmed(room, stay) > 0;
     }
 
+    // The name of the exclusion constraint in db/init.sql, and PostgreSQL's SQLSTATE for "a row
+    // conflicted with an exclusion constraint". The store recognises exactly this one violation.
+    private static final String NO_OVERLAP_CONSTRAINT = "reservations_no_overlap";
+    private static final String EXCLUSION_VIOLATION = "23P01";
+
+    // Set when the constraint refused a save. Main.java reads it and rolls the request back.
+    private boolean refused;
+
+    // True when this request's transaction has been aborted by the booking rule, and so must be
+    // rolled back instead of committed.
+    public boolean wasRefused() {
+        return refused;
+    }
+
     // nextval never hands the same number to two callers, and it does not wait for, or roll back
     // with, the transaction that asked for it. That is exactly what an id needs, and it is what
     // stops two requests in this language both being given R101.
@@ -69,8 +85,37 @@ public class PostgresReservationStore implements ReservationStore {
         row.checkIn = reservation.stay().checkIn();
         row.checkOut = reservation.stay().checkOut();
         row.status = statusName(reservation.status());
-        db.persist(row);
-        db.flush(); // INSERT now: a second R101 is refused here
+        try {
+            db.persist(row);
+            db.flush(); // INSERT now: the constraint answers here, not at the end of the request
+        } catch (PersistenceException failure) {
+            if (!isOverlapRefusal(failure)) {
+                throw failure; // a duplicate id, or anything else: a real fault, not a double booking
+            }
+            // Two things have to happen here, and both are specific to running inside one
+            // transaction. First, take the refused row back out of the persistence context, so
+            // Hibernate does not try to write it again when it next flushes. Second, remember that
+            // the booking was refused: PostgreSQL has marked this transaction as aborted and will
+            // refuse every further statement in it with SQLSTATE 25P02, so the unit of work must
+            // roll back rather than commit. A refused booking saves nothing, so that is exactly
+            // the right ending.
+            db.detach(row);
+            refused = true;
+            throw new OverlapRejectedException(
+                    reservation.room().number() + " already has a confirmed reservation for these nights.");
+        }
+    }
+
+    // Hibernate wraps the driver's error, so the cause chain is what has to be read.
+    private static boolean isOverlapRefusal(PersistenceException failure) {
+        for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
+            if (cause instanceof java.sql.SQLException sql
+                    && EXCLUSION_VIOLATION.equals(sql.getSQLState())
+                    && String.valueOf(sql.getMessage()).contains(NO_OVERLAP_CONSTRAINT)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Returns null when no reservation has that id.

@@ -74,6 +74,13 @@ public class Main {
         HotelApi.UnitOfWork unitOfWork = work -> transactions.execute(transaction -> {
             PostgresReservationStore store = new PostgresReservationStore(db, rooms);
             var result = work.apply(new BookingService(rooms, new CountingReservationStore(store, stats), email, slowStepMs));
+            if (store.wasRefused()) {
+                // The booking rule refused a save, so PostgreSQL has aborted this transaction and
+                // no further statement in it can run. Nothing should be written anyway: roll back
+                // and let the endpoint answer 409.
+                transaction.setRollbackOnly();
+                return result;
+            }
             store.saveChanges();
             return result;
         });
