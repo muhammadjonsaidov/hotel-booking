@@ -35,7 +35,14 @@ public class BookingService {
         pause(); // does nothing normally; the race demo makes this step slow
 
         Reservation reservation = new Reservation(store.nextReservationId(), guest, room, stay);
-        store.save(reservation);
+        try {
+            store.save(reservation);
+        } catch (OverlapRejectedException rejected) {
+            // Another request saved an overlapping reservation after our check and before our save.
+            // The check was honest when it ran; it had simply stopped being true. The guest gets the
+            // same answer either way.
+            return new BookingResult("Unavailable");
+        }
         try {
             notifications.sendConfirmation(new Confirmation(reservation.id(), guest.email(), room.number(), stay.checkIn(), stay.checkOut()));
         } catch (RuntimeException failure) {

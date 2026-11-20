@@ -61,7 +61,7 @@ check time (rows 2 and 4) it returns none: you cannot lock a row that does not e
 
 | Repair | Did it stop the double booking? | What it cost, measured |
 |---|---|---|
-| In-process lock | | |
+| In-process lock | (answered after Step 4) | Almost nothing: one lock, held only while save checks and appends. With one process `--race` now gives Maya Accepted R101, Omar Unavailable, and 1 Confirmed reservation for R7. |
 | `SELECT ... FOR UPDATE` on a guard row | | |
 | Optimistic version checking | | |
 | Exclusion constraint | | |
