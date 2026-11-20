@@ -4,6 +4,7 @@ package hotelbooking;
 // Run them with the other tests from the hotel-booking folder:  ./gradlew test
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -21,7 +22,10 @@ import hotelbooking.api.AvailabilityCache;
 import hotelbooking.api.CountingReservationStore;
 import hotelbooking.api.HotelApi;
 import hotelbooking.api.Stats;
+import hotelbooking.notifications.Confirmation;
+import hotelbooking.notifications.NotificationCounts;
 import hotelbooking.notifications.internal.EmailNotificationSender;
+import hotelbooking.notifications.internal.QueuedNotificationSender;
 import hotelbooking.reservations.BookingResult;
 import hotelbooking.reservations.BookingService;
 import hotelbooking.reservations.DateRange;
@@ -167,5 +171,68 @@ class ApiTests {
                 new DateRange(LocalDate.of(2026, 11, 13), LocalDate.of(2026, 11, 15)));
         assertThrows(OverlapRejectedException.class, () -> store.save(overlapping));
         assertEquals(1, store.countConfirmed(ROOMS.get(0), NOV_12_14));
+    }
+
+    // ---------------------------------------------------------------- P10
+    // One confirmation for the queue tests; only the queue's behaviour matters, not the contents.
+    static Confirmation aConfirmation(int number) {
+        return new Confirmation("R" + (101 + number), "guest" + number + "@example.com", "R7",
+                LocalDate.of(2026, 12, 1), LocalDate.of(2026, 12, 2));
+    }
+
+    @Test
+    void a_booking_does_not_wait_for_a_slow_confirmation() {
+        // The whole point of the queue: a one-second email must not cost the guest a second.
+        EmailNotificationSender slow = new EmailNotificationSender(1);
+        QueuedNotificationSender notifications = new QueuedNotificationSender(slow, 10, 1);
+
+        long started = System.nanoTime();
+        notifications.sendConfirmation(aConfirmation(1));
+        long handedOverMs = (System.nanoTime() - started) / 1_000_000;
+
+        assertTrue(handedOverMs < 100, "handing the email to the queue must be immediate");
+        assertEquals(0, slow.sent(), "and the email has not been sent yet");
+        assertEquals(1, notifications.counts().accepted());
+        notifications.close(false);
+    }
+
+    @Test
+    void a_burst_larger_than_the_bound_is_refused_and_counted() {
+        // Thirty confirmations into a queue of ten. The exact split depends on whether the worker
+        // got a turn during the burst, so what is asserted is what the bound promises rather than
+        // a number.
+        QueuedNotificationSender notifications =
+                new QueuedNotificationSender(new EmailNotificationSender(1), 10, 1);
+
+        for (int number = 0; number < 30; number++) {
+            notifications.sendConfirmation(aConfirmation(number));
+        }
+
+        NotificationCounts counts = notifications.counts();
+        assertEquals(30, counts.accepted() + counts.rejected());
+        assertTrue(counts.queued() <= 10, "the queue never grows past its bound");
+        assertTrue(counts.rejected() > 0, "and the bound really did refuse some");
+        // Not an equality: a worker may be part-way through sending one job, so it is neither
+        // queued nor completed yet. At most one per worker can be in flight.
+        long inFlight = counts.accepted() - counts.completed() - counts.queued();
+        assertTrue(inFlight >= 0 && inFlight <= 1, "at most one job per worker can be in flight");
+        notifications.close(false);
+    }
+
+    @Test
+    void a_drained_shutdown_finishes_everything_it_accepted() {
+        EmailNotificationSender slow = new EmailNotificationSender(0.02);
+        QueuedNotificationSender notifications = new QueuedNotificationSender(slow, 10, 1);
+        for (int number = 0; number < 10; number++) {
+            notifications.sendConfirmation(aConfirmation(number));
+        }
+
+        notifications.close(true);
+
+        NotificationCounts counts = notifications.counts();
+        assertEquals(10, counts.accepted());
+        assertEquals(10, counts.completed());
+        assertEquals(0, counts.queued());
+        assertEquals(10, slow.sent());
     }
 }

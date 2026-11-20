@@ -79,3 +79,37 @@ Nothing refused them.
 A burst of thirty thousand would have been accepted just the same: thirty thousand emails held in memory,
 more than eight hours of sending at one a second, until the process ran out of memory and took the bookings
 down with the emails.
+
+## With a bound, and counted rejections
+
+The same burst against the default queue of ten: `HOTEL_EMAIL_SECONDS=1 ./gradlew bootRun` on an empty
+database, then `java tools/Burst.java`.
+
+```
+Sending 30 bookings, one after another...
+
+Accepted: 30
+Rejected: 0
+Slowest booking: 150 ms
+Total: 0.3 s
+
+GET /stats
+{"searches":0,"databaseQueries":90,"cacheHits":0,"cacheMisses":0,"notificationsAccepted":11,"notificationsRejected":19,"notificationsCompleted":0,"notificationsQueued":10}
+```
+
+Eleven seconds later, once the worker had caught up:
+
+```
+{"searches":0,"databaseQueries":90,"cacheHits":0,"cacheMisses":0,"notificationsAccepted":11,"notificationsRejected":19,"notificationsCompleted":11,"notificationsQueued":0}
+```
+
+- Every booking succeeded: 30 times 201, and PostgreSQL held 30 Confirmed reservations. A refused email is
+  not a refused room.
+- accepted 11 + rejected 19 = 30, and queued never went above the bound of 10. Over HTTP the worker had time
+  to take one job during the burst and free a slot, so it is 11 and 19 rather than 10 and 20.
+- Once the worker caught up, accepted 11 = completed 11 + queued 0: everything the queue took, it finished.
+- The 19 refusals are a real cost (19 guests with a reservation nobody told them about), but a counted one:
+  a queue that dropped them silently would have looked exactly like one that was coping.
+
+Rejected above zero in normal running, with no burst going on, means the queue is too small, there are too
+few workers, or the mail sender is too slow; queued tells you which way it is leaning.
