@@ -145,3 +145,18 @@ Race: with the exclusion constraint, the race tool gives one 201 and one 409 aga
 Decision: the rule lives in PostgreSQL with the pre-check kept in front of it (docs/adr-003-booking-concurrency.md); the costs of the other three repairs are measured in docs/interleaving.md.
 
 # P10 design notes
+
+## Concurrency model
+
+The four questions, answered for the confirmation email: the request does not own it (the room is the guest's once
+the reservation commits, and the guest is not waiting for the email); it is one stage (send one email); it needs a
+limit (a burst of 30 left 29 emails in memory with nothing refusing them); and it shares no mutable state except the
+queue itself.
+
+- Rejected, actor: the work is one email per booking with no per-room state to guard, and an actor per room would also serialise bookings and pull the booking rule out of the database, which ADR-003 just put there.
+- Rejected, reactive pipeline: there is only one stage, so there is nothing to chain and no stage-to-stage backpressure to carry.
+- Rejected, fork–join: the email is not a part of the booking that must be joined back, and nobody waits for it to finish.
+- Rejected, structured concurrency: the email must outlive the request that caused it, which is exactly what a scope bound to the request forbids.
+- Rejected, software transactional memory: there is no shared in-memory state to compose; the only shared thing is the queue, and it is already safe.
+- Kept, a bounded in-memory queue with one worker and counted rejections: one fire-and-forget stage that needs a limit is exactly what it does, and it took a one-second email out of a 1.11 s booking (now 6–8 ms) while refusing countably instead of piling up.
+- Its limit: the queue lives in process memory, so a killed process loses every queued email without a trace (7 in the kill -9 run); only a transactional outbox (P17) fixes that.
