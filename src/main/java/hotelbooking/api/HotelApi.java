@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -51,11 +52,13 @@ public class HotelApi {
     private final List<Room> rooms;
     private final UnitOfWork unitOfWork;
     private final Stats stats;
+    private final AvailabilityCache cache;
 
-    public HotelApi(List<Room> rooms, UnitOfWork unitOfWork, Stats stats) {
+    public HotelApi(List<Room> rooms, UnitOfWork unitOfWork, Stats stats, AvailabilityCache cache) {
         this.rooms = rooms;
         this.unitOfWork = unitOfWork;
         this.stats = stats;
+        this.cache = cache;
     }
 
     static ResponseEntity<?> problem(int status, String title, String detail) {
@@ -105,14 +108,29 @@ public class HotelApi {
         }
 
         stats.searches.incrementAndGet();
+        // Cache-aside (L04): Redis first; only on a miss ask PostgreSQL, then keep a copy.
+        String key = cache.key(checkIn, checkOut);
+        String cached = cache.get(key);
+        if (cached != null) {
+            stats.cacheHits.incrementAndGet();
+            List<String> numbers = List.of(cached.split(","));
+            return toPage(rooms.stream().filter(room -> numbers.contains(room.number())).toList(), checkIn, checkOut, size, after);
+        }
+        stats.cacheMisses.incrementAndGet();
         return unitOfWork.run(service -> {
-            // Cursor pagination (L04): the rooms after the last one the client has seen, in text order.
-            List<Room> rest = service.findFreeRooms(stay).stream().filter(room -> room.number().compareTo(after) > 0)
-                .sorted(Comparator.comparing(Room::number)).toList();
-            List<Room> page = rest.stream().limit(Integer.parseInt(size)).toList();
-            String next = rest.size() > page.size() ? page.get(page.size() - 1).number() : null;
-            return ResponseEntity.ok(new Availability(checkIn, checkOut, page.stream().map(room -> new RoomJson(room.number(), room.type())).toList(), next));
+            List<Room> free = service.findFreeRooms(stay);
+            cache.set(key, free.stream().map(Room::number).sorted().collect(Collectors.joining(",")));
+            return toPage(free, checkIn, checkOut, size, after);
         });
+    }
+
+    // Cursor pagination (L04): the free rooms after the last one the client has seen, in text order.
+    static ResponseEntity<?> toPage(List<Room> free, String checkIn, String checkOut, String size, String after) {
+        List<Room> rest = free.stream().filter(room -> room.number().compareTo(after) > 0)
+            .sorted(Comparator.comparing(Room::number)).toList();
+        List<Room> page = rest.stream().limit(Integer.parseInt(size)).toList();
+        String next = rest.size() > page.size() ? page.get(page.size() - 1).number() : null;
+        return ResponseEntity.ok(new Availability(checkIn, checkOut, page.stream().map(room -> new RoomJson(room.number(), room.type())).toList(), next));
     }
 
     @PostMapping("/reservations")

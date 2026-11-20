@@ -9,7 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import hotelbooking.api.AvailabilityCache;
 import hotelbooking.api.CountingReservationStore;
 import hotelbooking.api.HotelApi;
 import hotelbooking.api.Stats;
@@ -30,12 +33,32 @@ class ApiTests {
     static final String OMAR = """
         {"guestName":"Omar","guestEmail":"omar@example.com","room":"R7","checkIn":"2026-11-13","checkOut":"2026-11-15"}""";
 
-    // The web app with the in-memory store; MockMvc sends requests to it without a network.
+    // Redis's three commands on a map. The tests run in a second, so the 30 s TTL never ends.
+    static class InMemoryKeyValueStore implements AvailabilityCache.KeyValueStore {
+        private final Map<String, String> values = new HashMap<>();
+
+        @Override
+        public String get(String key) {
+            return values.get(key);
+        }
+
+        @Override
+        public void set(String key, String value, int ttlSeconds) {
+            values.put(key, value);
+        }
+
+        @Override
+        public void increment(String key) {
+            values.put(key, String.valueOf(Long.parseLong(values.getOrDefault(key, "0")) + 1));
+        }
+    }
+
+    // The web app with the in-memory store and cache; MockMvc sends requests to it without a network.
     static MockMvc newApp() {
         Stats stats = new Stats();
         BookingService service = new BookingService(ROOMS, new CountingReservationStore(new InMemoryReservationStore(), stats), new EmailNotificationSender());
         // A list in memory has nothing to save at the end of a request.
-        return MockMvcBuilders.standaloneSetup(new HotelApi(ROOMS, work -> work.apply(service), stats)).build();
+        return MockMvcBuilders.standaloneSetup(new HotelApi(ROOMS, work -> work.apply(service), stats, new AvailabilityCache(new InMemoryKeyValueStore()))).build();
     }
 
     @Test
