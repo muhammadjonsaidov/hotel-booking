@@ -108,3 +108,12 @@ Race: matches the Before baseline exactly; R7 still has 2 Confirmed reservations
 - Order of free rooms: the search lists rooms sorted by room number as text, so R10 comes before R7, and the "after" cursor compares text the same way; every client therefore knows where the next page starts.
 - What clients compare: an error is identified by its title, such as Unavailable or NotFound; detail is a sentence for people and may be reworded without breaking clients.
 - Room type: not a fixed list in the contract but catalog data from the rooms table, such as Standard or Deluxe, so the hotel can add a new type without changing the API.
+
+## API tests
+
+- Search: GET /rooms/availability?checkIn=2026-11-12&checkOut=2026-11-14 → 200 with R7 Standard and R8 Deluxe and "next":null.
+- Book, then book again: POST Maya for R7 12–14 Nov → 201 {"id":"R101","status":"Confirmed","notificationFailed":false}; then POST Omar for R7 13–15 Nov → 409 Unavailable.
+- Wrong dates: POST Maya with checkOut equal to checkIn (2026-11-12) → 400 InvalidDates as application/problem+json.
+- Cancel twice: POST Maya, then DELETE /reservations/R101 → 204; DELETE it again → 404 NotFound.
+
+Result: 15 checks pass (8 behaviour, 3 architecture, 4 API). Changing the expected 409 to 201 in the second test made bookingAnswers201Then409ForASharedNight fail; changing it back restored all 15.
