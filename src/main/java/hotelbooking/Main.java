@@ -35,6 +35,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 // ./gradlew bootRun             -> the API on http://localhost:5080, with PostgreSQL (first: docker compose up -d for PostgreSQL and Redis)
 //                                  HOTEL_PORT=5081 starts a second instance; HOTEL_SLOW_STEP=1 pauses each booking 1 s between check and save
+//                                  HOTEL_EMAIL_SECONDS=1 makes each confirmation email take 1 s, like a real mail server
 // ./gradlew run --args="--demo" -> the P06 demo, with the data in lists
 // ./gradlew run --args="--race" -> two guests book the same room at the same moment
 
@@ -62,7 +63,9 @@ public class Main {
     @Bean
     HotelApi hotelApi(EntityManager db, TransactionTemplate transactions, StringRedisTemplate redis) {
         List<Room> rooms = new PostgresRoomCatalog(db).all();
-        EmailNotificationSender email = new EmailNotificationSender();
+        // P10 Step 1: HOTEL_EMAIL_SECONDS=1 makes the confirmation sender as slow as a real mail server.
+        double emailSeconds = Double.parseDouble(System.getenv().getOrDefault("HOTEL_EMAIL_SECONDS", "0"));
+        EmailNotificationSender email = new EmailNotificationSender(emailSeconds);
         Stats stats = new Stats();
         try (RedisConnection connection = redis.getRequiredConnectionFactory().getConnection()) {
             connection.ping(); // stop here if Redis is not running
