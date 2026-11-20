@@ -72,6 +72,19 @@ public class Main {
         QueuedNotificationSender notifications = new QueuedNotificationSender(email,
                 Integer.parseInt(System.getenv().getOrDefault("HOTEL_QUEUE_CAPACITY", "10")),
                 Integer.parseInt(System.getenv().getOrDefault("HOTEL_WORKERS", "1")));
+        // P10 Step 6: drain the queue before the worker stops, so a polite shutdown (Ctrl+C, a normal
+        // deploy) owes nobody an email. Nothing here helps with kill -9: see docs/queue-trace.md.
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            var before = notifications.counts();
+            System.out.println("Stopping the app with " + before.accepted() + " confirmations accepted and "
+                    + before.completed() + " sent so far...");
+            System.out.println("Draining the notification queue: " + before.queued() + " to go");
+            notifications.close(true);
+            var after = notifications.counts();
+            System.out.println("Notification worker stopped.");
+            System.out.println("accepted=" + after.accepted() + "  completed=" + after.completed() + "  queued=" + after.queued());
+            System.out.println(after.accepted() == after.completed() ? "Nobody was owed an email." : "Some guests are still owed an email.");
+        }, "notifications-drain"));
         Stats stats = new Stats();
         try (RedisConnection connection = redis.getRequiredConnectionFactory().getConnection()) {
             connection.ping(); // stop here if Redis is not running

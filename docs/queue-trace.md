@@ -113,3 +113,42 @@ Eleven seconds later, once the worker had caught up:
 
 Rejected above zero in normal running, with no burst going on, means the queue is too small, there are too
 few workers, or the mail sender is too slow; queued tells you which way it is leaning.
+
+## What stopping the app does
+
+A shutdown hook in `Main.java` calls `notifications.close(true)`: the queue is emptied before the worker stops.
+Each run: an empty database, the app started with `HOTEL_EMAIL_SECONDS=1` (as `java -jar` on the built jar),
+the burst, and three seconds later the app was stopped while 7 confirmations were still queued:
+
+```
+GET /stats just before stopping:
+"notificationsAccepted":11,"notificationsRejected":19,"notificationsCompleted":3,"notificationsQueued":7
+```
+
+A polite stop (SIGTERM, what a normal deploy sends; Ctrl+C in the terminal runs the same hook). The process took
+7 seconds to exit, because it sent the 7 emails it still owed first:
+
+```
+Stopping the app with 11 confirmations accepted and 3 sent so far...
+Draining the notification queue: 7 to go
+Notification worker stopped.
+accepted=11  completed=11  queued=0
+Nobody was owed an email.
+```
+
+The same run, but `kill -9` instead. The counters just before the kill were identical (3 sent, 7 queued). After
+it the app printed nothing at all, not a single shutdown line, and PostgreSQL still held all 30 Confirmed
+reservations. The 7 queued confirmations were gone.
+
+## What this design still loses
+
+The queue lives in the app's memory; the reservations live in PostgreSQL. A polite stop drains the queue and
+owes nobody an email. A killed process (`kill -9`, a crashed container, a power cut) loses every queued
+confirmation, and nothing records it: no counter changes, no line is logged, no row says a guest was owed an
+email. In the run above, 7 guests kept their rooms and were never told. The bound and the counters make the
+refusals visible, but they cannot make a killed process's losses visible, because the counters die with it.
+
+The honest fix is a transactional outbox: write the confirmation job into the database in the same transaction
+as the reservation, so the booking and its email are saved or lost together, and let a worker send from that
+table. P17 builds it. The drain should also not run for ever: a real shutdown stops accepting new work first,
+drains with a time limit, then says how many it dropped.
