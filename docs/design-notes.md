@@ -123,3 +123,5 @@ Result: 15 checks pass (8 behaviour, 3 architecture, 4 API). Changing the expect
 Checks: all 15 pass (8 behaviour tests, 3 architecture rules and 4 API tests), with 0 failures, errors or skipped tests; --demo prints the same nine lines and --race still double-books R7.
 Seven answers: against an empty PostgreSQL database every request in docs/api-check.md matched exactly: search 200 with R7 and R8, Maya 201 R101, Omar 409 Unavailable, same-day stay 400 InvalidDates, search 200 with only R8, cancel 204, cancel again 404 NotFound.
 Restart check: Maya booked R7 again as R102, the app was stopped and started, and the search still showed only R8 free; the reservations table holds R101 Cancelled and R102 Confirmed.
+
+# P08 design notes
