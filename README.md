@@ -8,7 +8,7 @@ Use JDK 25, the Java version used to verify this project. The Gradle wrapper is 
 
 ```sh
 ./gradlew test
-docker compose up -d            # PostgreSQL 18 with the rooms and reservations tables
+docker compose up -d            # PostgreSQL 18 (rooms and reservations) and Redis 8 (search cache)
 ./gradlew bootRun               # the web app on http://localhost:5080 (contract: /openapi.yaml)
 ./gradlew run --args="--demo"   # the console demo
 ```
@@ -86,11 +86,12 @@ src/main/java/hotelbooking/
 
 ## Verification
 
-`./gradlew test` runs 11 checks:
+`./gradlew test` runs 17 checks:
 
 - `BookingServiceTests`: five tests for acceptance, overlap refusal, adjacent stays, invalid dates and cancellation.
 - `BookingNotificationTests`: three tests for confirmation ids, failure handling and SMS.
 - `ArchitectureTests`: three ArchUnit rules enforcing module dependencies.
+- `ApiTests`: six HTTP tests through MockMvc with the in-memory store and a map-backed cache: search, booking and conflict, invalid dates, cancel twice, a cache hit, and invalidation after a booking and a cancel.
 
 The architecture rules prevent Reservations from depending on other modules’ internals, prevent Rooms from depending on other modules, and prevent Payments and Notifications from depending on Reservations. Test code is excluded from those dependency checks.
 
@@ -105,6 +106,8 @@ The HTML test report is available at `build/reports/tests/test/index.html` after
 - [Quality scenarios](docs/quality-scenarios.md): stakeholders and measurable quality targets; planned targets are distinguished from existing checks.
 - [Business contexts](docs/contexts.md): hotel vocabulary, rule ownership and boundary contracts.
 - [Architecture decision](docs/adr-001-modular-monolith.md): why the app uses a modular monolith and when to reconsider that choice.
+- [Cache decision](docs/adr-002-cache-availability.md): why only the free-room search is cached in Redis, and why booking never reads the cache.
+- [API contract](docs/openapi.yaml), [capacity estimate](docs/capacity.md), [API check](docs/api-check.md) and [cache experiment](docs/cache-experiment.md): the HTTP API, its expected load, its verified answers against PostgreSQL, and the search measured with and without the cache (`java tools/Measure.java` while the app runs).
 - [Diagrams](docs/diagrams.drawio): open in draw.io; the Context map and Modules pages show business ownership and module dependencies.
 
 ## Development progression
@@ -113,3 +116,5 @@ The HTML test report is available at `build/reports/tests/test/index.html` after
 2. Added behavior tests, extracted storage and notification interfaces, and introduced failure reporting and SMS support.
 3. Defined four business contexts, a shared vocabulary, quality scenarios, rule ownership and boundary contracts.
 4. Moved the code into four modules, introduced the room catalog and Confirmation message, added simulated payments, and enforced dependencies with architecture tests.
+5. Put the app behind a Spring Boot HTTP API with an OpenAPI contract and API tests, and moved rooms and reservations into PostgreSQL.
+6. Measured the search, cached it in Redis with a 30-second TTL and version-based invalidation, and recorded the cache decision in ADR-002.
