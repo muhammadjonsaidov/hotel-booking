@@ -100,3 +100,5 @@ The reservationsUsesOnlyPublicContracts rule failed when BookingService directly
 Tests: all 11 checks pass (the same 8 behavior tests plus 3 architecture rules), with 0 failures, errors or skipped tests.
 Demo: all nine lines match the Before baseline exactly, including Accepted R101 for Maya, Unavailable for Omar’s overlapping stay, Accepted R102 for Nora and 2 confirmation emails.
 Race: matches the Before baseline exactly; R7 still has 2 Confirmed reservations for 12–14 November, with Maya accepted as R101 and Omar as R102.
+
+# P07 design notes
