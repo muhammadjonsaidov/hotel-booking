@@ -137,3 +137,9 @@ Measurements: 1,000 searches for 12–14 Nov cost 2,000 database queries without
 Stale result and its fix: without invalidation a search right after Maya's booking still listed R7 while Omar got 409; raising availability:version on every 201 and 204 made the same search answer R8 only.
 
 # P09 design notes
+
+## After
+
+Checks: all 19 pass (8 behaviour tests, 3 architecture rules and 8 API tests); --race now prints "Only one guest has R7." instead of "Double booking!".
+Race: with the exclusion constraint, the race tool gives one 201 and one 409 against one instance and against two instances on ports 5080 and 5081, and R7 ends with exactly one Confirmed reservation; a direct INSERT in psql is refused by reservations_no_overlap.
+Decision: the rule lives in PostgreSQL with the pre-check kept in front of it (docs/adr-003-booking-concurrency.md); the costs of the other three repairs are measured in docs/interleaving.md.
