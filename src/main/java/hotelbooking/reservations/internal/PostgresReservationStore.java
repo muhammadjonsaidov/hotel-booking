@@ -7,28 +7,12 @@ import hotelbooking.reservations.ReservationStatus;
 import hotelbooking.reservations.OverlapRejectedException;
 import hotelbooking.reservations.ReservationStore;
 import hotelbooking.rooms.Room;
-import jakarta.persistence.Entity;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import java.time.LocalDate;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-// One row of the reservations table in db/init.sql (Spring Boot maps guestName to guest_name).
-@Entity
-@Table(name = "reservations")
-class ReservationRow {
-    @Id String id;
-    String guestName;
-    String guestEmail;
-    String room;
-    LocalDate checkIn;
-    LocalDate checkOut;
-    String status;
-}
 
 // Keeps reservations in PostgreSQL. Main creates one per request (a unit of work): it remembers
 // the reservations it hands out, and saveChanges writes their changes.

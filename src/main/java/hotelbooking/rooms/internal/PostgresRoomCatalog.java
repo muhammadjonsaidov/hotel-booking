@@ -2,19 +2,9 @@ package hotelbooking.rooms.internal;
 
 import hotelbooking.rooms.Room;
 import hotelbooking.rooms.RoomCatalog;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import java.util.List;
 
-// One row of the rooms table in db/init.sql.
-@Entity
-@Table(name = "rooms")
-class RoomRow {
-    @Id String number;
-    String type;
-}
+import java.util.List;
 
 // Reads the hotel's rooms from the rooms table. Only Main creates it.
 public class PostgresRoomCatalog implements RoomCatalog {
